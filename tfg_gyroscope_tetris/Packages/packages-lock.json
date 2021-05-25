@@ -1,7 +1,14 @@
 {
   "dependencies": {
+    "com.febucci.custom-hierarchy": {
+      "version": "https://github.com/febucci/unitypackage-custom-hierarchy.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "b7da93eeda88ebeb82064b6d3fd9d22a0ed459eb"
+    },
     "com.unity.2d.animation": {
-      "version": "5.0.4",
+      "version": "5.0.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -55,7 +62,7 @@
       "dependencies": {}
     },
     "com.unity.2d.spriteshape": {
-      "version": "5.1.1",
+      "version": "5.1.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -79,6 +86,13 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.device-simulator": {
+      "version": "2.2.4-preview",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.ext.nunit": {
       "version": "1.0.6",
       "depth": 1,
@@ -96,7 +110,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.7",
+      "version": "2.0.8",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -146,7 +160,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.textmeshpro": {
-      "version": "3.0.4",
+      "version": "3.0.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -155,7 +169,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.4.7",
+      "version": "1.4.8",
       "depth": 0,
       "source": "registry",
       "dependencies": {
