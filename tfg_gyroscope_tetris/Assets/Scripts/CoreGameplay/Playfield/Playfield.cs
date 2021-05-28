@@ -6,6 +6,9 @@ public class Playfield : MonoBehaviour
 {
     [SerializeField, Tooltip("Playfield grid data")]
     private PlayfieldGrid _grid = null;
+    [SerializeField, Tooltip("Reference to the container for the blocks gameobject placed on the playfield")]
+    private Transform _blocksContainer;
+
 
     // Start is called before the first frame update
     void Start()
