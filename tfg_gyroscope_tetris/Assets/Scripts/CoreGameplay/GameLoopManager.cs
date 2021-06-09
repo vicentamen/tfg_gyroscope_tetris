@@ -9,23 +9,22 @@ public class GameLoopManager : MonoBehaviour
 {
     [Tooltip("Read the player input info. You can change it depending on the final build platform"), SerializeField]
     private InputSystem _inputSystem;
+    [SerializeField]
+    private CoreLoopData _gameLoopData;
 
-    //Game management variables
-    private Coroutine _playerInputLoop;
-    private Coroutine _activePieceFallLoop;
+    //Loop management variables
+    private Timer _playerInputLoop; //Needs to be updated on the Update method
+    private Timer _activePieceFallLoop; //Needs to be updated on the Update method
+
+    //Game state variables
     private bool _isGameOver = false;
     public bool isGameOver { get => _isGameOver; }
 
+    #region GAME_INITIALIZATION
     // Start is called before the first frame update
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        InitGame();
     }
 
     /// <summary>
@@ -36,17 +35,47 @@ public class GameLoopManager : MonoBehaviour
         //Initialize pieces pools
         //Initialize Playfield
         //Initialize Score manager
+        //Initialize Loop timers
+        _playerInputLoop = new Timer(_gameLoopData.timeBetweenInputs, UpdatePlayerInput);
+        _activePieceFallLoop = new Timer(_gameLoopData.timeBetweenFall, MakePieceFall);
 
         _isGameOver = false;
     }
+    #endregion
+
+    #region UPDATE_GAME_STATE
+    // Update is called once per frame
+    void Update()
+    {
+        if (!_isGameOver) //Will have to check the game state after each one on the loops have been tested
+        {
+            _playerInputLoop.Update();
+            _activePieceFallLoop.Update();
+        }
+    }
 
     /// <summary>
-    /// Check if the game has been finished
+    /// Reads the player Input and checks and update the game state
     /// </summary>
-    /// <returns></returns>
-    private bool CheckGameOver()
+    private void UpdatePlayerInput()
     {
-        return _isGameOver;
+        Debug.LogWarning("Reading player Input every" + _gameLoopData.timeBetweenInputs + " seconds");
+        //Get Player Input
+        //Update piece state -- Does the piece need to be rotated or not?
+        //Check game state -- Is game over? -- has any line been completed? How many of them?
+        //Update game state
+    }
+
+    /// <summary>
+    /// Make the active piece fall one line and updates the game state
+    /// </summary>
+    private void MakePieceFall()
+    {
+        Debug.LogError("Piece falling every " + _gameLoopData.timeBetweenFall + " seconds");
+        //Make piece fall
+        //Update piece state -- Does the piece need to be rotated or not?
+        //Check game state -- Is game over? -- has any line been completed? How many of them?
+        //Update game state
     }
 
     /// <summary>
@@ -54,7 +83,7 @@ public class GameLoopManager : MonoBehaviour
     /// </summary>
     private void PauseGame()
     {
-       
+        
     }
 
     /// <summary>
@@ -64,7 +93,15 @@ public class GameLoopManager : MonoBehaviour
     {
 
     }
-    //Build a tick Coroutine that will work as to read the input and make the pieces fall.
-     //- This loops can work on the usual Update frequency or with custom times. 
+    #endregion
+
+    /// <summary>
+    /// Check if the game has been finished
+    /// </summary>
+    /// <returns></returns>
+    private bool CheckGameOver()
+    {
+        return _isGameOver;
+    }
 
 }
