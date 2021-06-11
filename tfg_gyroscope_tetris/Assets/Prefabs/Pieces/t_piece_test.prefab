@@ -129,10 +129,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 325e709b6b69410409534fd2aec03ee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _blockSprite: {fileID: 0}
-  _menuPreviewSprite: {fileID: 21300000, guid: 1770510dea35ee84491e0a89e24a0db2, type: 3}
+  blockSprite: {fileID: 0}
+  menuPreviewSprite: {fileID: 21300000, guid: 1770510dea35ee84491e0a89e24a0db2, type: 3}
   _startingColumn: 0
   _startingLine: 0
+  _pieceBlocks:
+  - {fileID: 4264958095714190230}
+  - {fileID: 4264958096342111278}
+  - {fileID: 4264958096354522783}
+  - {fileID: 4264958096153959719}
 --- !u!1 &4264958096153959717
 GameObject:
   m_ObjectHideFlags: 0
