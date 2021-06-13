@@ -8,28 +8,56 @@ public class Playfield : MonoBehaviour
     private PlayfieldGrid _gridData = null;
     [SerializeField, Tooltip("Reference to the container for the blocks gameobject placed on the playfield")]
     private Transform _blocksContainer;
+    [SerializeField]
+    private Transform _backgroundImage;
+    [Header("BLOCK PROPERTIES")]
+    [SerializeField]
+    private Pool _blocksPool;
 
     public PlayfieldGrid gridData { get => _gridData; }
 
     //Gotta have to save the grid state somewhere and the blocks linked to the positions
-    private SpriteRenderer[,] _board; //It probably needs to be a block matrix. =========== WILL NEED TO FIND A WAY TO SAVE THE OBSTACLES POSITION IN THE BOARD ==============
+    private SpriteRenderer[,] _board; //It probably needs to be a block matrix. =========== WILL NEED TO FIND A WAY TO SAVE THE OBSTACLES POSITION IN THE BOARD ==============\\
 
-    // Start is called before the first frame update
-    void Start()
+    //Piece placement management
+    private Vector2Int _pieceSpawnGridPosition;
+
+    public void Initialize()
     {
-        
+        UpdateBackgroundImage();
+
+        _pieceSpawnGridPosition = new Vector2Int(Mathf.RoundToInt(_gridData.columns / 2), (_gridData.rows < 26)? (_gridData.rows - 2) : 24);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void UpdateBackgroundImage()
     {
-        
+        SpriteRenderer image;
+        if(_backgroundImage.TryGetComponent(out image))
+        {
+            image.size = new Vector2(_gridData.worldSizeX + (_gridData.cellSize/2f), _gridData.worldSizeY); //Update Image Size
+        }
+
+        //Update image position
+        //_backgroundImage.transform.position = this.transform.position + (Vector3.down * (_gridData.cellSize/2f));
+    }
+
+    public Vector3 GetPieceSpawnWorldPosition(bool isPivotOffsetted)
+    {
+        //The result should change depending on wheter the pivot is offsetted or not
+        return FromGridToWorldPosition(_pieceSpawnGridPosition);
     }
 
     public void PlacePiece(PieceBase piece)
     {
         //get the piece blocks position and add them to the board, will have to use BLOCK objects or not, maybe I can simply have SpriteReder-s and animate them later with DoTween
+        foreach(Transform pieceBlock in piece.pieceBlocks)
+        {
+            Block newBlock = _blocksPool.GetItem().GetComponent<Block>();
+            newBlock.PlaceBlock(pieceBlock.position, Vector3.one * _gridData.cellSize, piece);
+            //Now I should save the block somewhere so I can delete it later
+        }
         //Will probably need a pool of bloks if I go with this solution
+        //Spawn blocks
     }
 
 
@@ -47,11 +75,26 @@ public class Playfield : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
-    public Vector2 FromGridToWorldPosition(Vector2Int gridPosition) //Might not need this function
+    public Vector3 FromGridToWorldPosition(Vector2Int gridPosition) //Might not need this function
     {
-        Vector2 worldPos = new Vector2();
-        //Calculate worldPosition
-        return worldPos;
+        float x = this.transform.position.x - (_gridData.worldSizeX / 2f) + (gridPosition.x * _gridData.cellSize) + (_gridData.cellSize / 2f);
+        float y = this.transform.position.y - (_gridData.worldSizeY / 2f) + (gridPosition.y * _gridData.cellSize) + (_gridData.cellSize / 2f);
+
+        return new Vector3(x, y, this.transform.position.z);
+    }
+
+    public bool IsOutOfBounds(Vector3 pos)
+    {
+        if (pos.x < this.transform.position.x - (_gridData.worldSizeX / 2f) + (_gridData.cellSize / 2f))
+            return true;
+        else if (pos.x > this.transform.position.x + (_gridData.worldSizeX / 2f) + (_gridData.cellSize / 2f))
+            return true;
+        else if (pos.y < this.transform.position.y - (_gridData.worldSizeY / 2f) + (_gridData.cellSize / 2f))
+            return true;
+        else if (pos.y > this.transform.position.y + (_gridData.worldSizeY / 2f) + (_gridData.cellSize / 2f))
+            return true;
+
+        return false;
     }
     #endregion
 
@@ -70,6 +113,12 @@ public class Playfield : MonoBehaviour
 
                     Gizmos.DrawWireCube(new Vector3(x, y, transform.position.z), Vector3.one * _gridData.cellSize);
                 }
+            }
+
+            Gizmos.color = Color.yellow;
+            if(_pieceSpawnGridPosition != null) //Show where the piece is going to spawn by default
+            {
+                Gizmos.DrawCube(FromGridToWorldPosition(_pieceSpawnGridPosition), Vector3.one * _gridData.cellSize);
             }
         }
     }

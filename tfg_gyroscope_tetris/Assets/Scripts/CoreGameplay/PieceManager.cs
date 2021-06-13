@@ -24,8 +24,8 @@ public class PieceManager : MonoBehaviour
         //Initilize game pieces
         InitPieces(gridData);
         //Build the main and back up pieces queue
-        BuildPiecesQueue(_piecesQueue);
-        BuildPiecesQueue(_backupPiecesQueue);
+        BuildPiecesQueue(out _piecesQueue);
+        BuildPiecesQueue(out _backupPiecesQueue);
     }
 
     private void InitPieces(PlayfieldGrid gridData)
@@ -59,12 +59,12 @@ public class PieceManager : MonoBehaviour
         _piecesQueue.Enqueue(_backupPiecesQueue.Dequeue());
 
         if (_backupPiecesQueue.Count <= 0) //If we have emptied the backup queue, fill it again
-            BuildPiecesQueue(_backupPiecesQueue);
+            BuildPiecesQueue(out _backupPiecesQueue);
 
         return nextPiece;
     }
 
-    private void BuildPiecesQueue(Queue<PieceBase> queue)
+    private void BuildPiecesQueue(out Queue<PieceBase> queue)
     {
         queue = new Queue<PieceBase>();
 

@@ -40,6 +40,7 @@ public class GameLoopManager : MonoBehaviour
     private void InitGame()
     {
         //Initialize Playfield
+        playfield.Initialize();
         //Initialize pieces pools
         _pieceManager.Initialize(_gameLoopData.pieces, playfield.gridData);
         //Initialize Score manager
@@ -51,12 +52,16 @@ public class GameLoopManager : MonoBehaviour
         _isGameOver = false;
 
         //Startgame
+        StartGame();
     }
 
     private void StartGame()
     {
+        //Get player a new active piece
+        GetNewActivePiece();
         //Start loop timers
-        //Give player new active piece --> there is something missing in the loop and I cannot get my head around it
+        _mainLoop.StartTimer();
+       // _playerInputLoop.StartTimer();
     }
     #endregion
 
@@ -66,7 +71,7 @@ public class GameLoopManager : MonoBehaviour
     {
         if (!_isGameOver && !_isPaused) //Will have to check the game state after each one on the loops have been tested
         {
-            _playerInputLoop.Update();
+            //_playerInputLoop.Update();
             _mainLoop.Update();
         }
     }
@@ -88,7 +93,9 @@ public class GameLoopManager : MonoBehaviour
     /// </summary>
     private void CorePieceLoop()
     {
+        Debug.LogWarning("Fall");
         //Move piece
+        _activePiece.MovePiece(Vector2.down, playfield, _mainLoop.StartTimer, OnPiecePlaced);
             //Who is moving the piece? We said it shold be the piece itself
         //Is the piece placed?  --> The piece will need to return a true or false, or we can send two unityActions
             // ---> One UnityAction fow when the piece has been placed
@@ -98,6 +105,23 @@ public class GameLoopManager : MonoBehaviour
             // ---> Other UnityAction for when the piece has moved correctly
             //If no, then continue with the fall loop
             //If yes, then get the player a new piece
+    }
+
+    private void OnPiecePlaced()
+    {
+        //Stop timers
+        _mainLoop.StopTimer();
+        _playerInputLoop.StopTimer();
+
+        //Place Piece
+        playfield.PlacePiece(_activePiece);
+
+        _activePiece.gameObject.SetActive(false);
+        //Add blocks to the playfield
+        GetNewActivePiece();
+        //RestartTimers
+        _mainLoop.StartTimer();
+        _playerInputLoop.StartTimer();
     }
 
     /// <summary>
@@ -123,9 +147,9 @@ public class GameLoopManager : MonoBehaviour
     /// </summary>
     private void GetNewActivePiece()
     {
-        //Get active piece from the piece manager
-        //Place piece in starting position and rotation
-        //Enable active piece
+        _activePiece = _pieceManager.GetNextPiece();
+        _activePiece.transform.position = playfield.GetPieceSpawnWorldPosition(_activePiece.isPivotOffsetted);
+        _activePiece.gameObject.SetActive(true);
     }
 
     private void MoveActivePiece(Vector2 moveDirection, UnityAction onPiecePlaced)

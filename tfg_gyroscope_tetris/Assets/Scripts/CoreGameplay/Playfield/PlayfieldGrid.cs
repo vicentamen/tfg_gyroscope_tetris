@@ -12,10 +12,10 @@ public class PlayfieldGrid : ScriptableObject
     public float worldSizeY { get => _worldSizeY; }
 
     [Header("How many blocks fit horizontal and vertically")]
-    [SerializeField] private float _columns = 13f;
-    [SerializeField] private float _rows = 24f;
-    public float columns { get => _columns; }
-    public float rows { get => _rows; }
+    [SerializeField] private int _columns = 13;
+    [SerializeField] private int _rows = 24;
+    public int columns { get => _columns; }
+    public int rows { get => _rows; }
     
     [Header("How big is each block")]
     [SerializeField] private float _cellSize;

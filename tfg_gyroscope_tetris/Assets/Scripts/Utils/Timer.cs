@@ -28,14 +28,20 @@ public class Timer
         _timer += Time.deltaTime; //Increment time with the time past since the last Update
         if ((_timer >= _time) && _isTimerRunning) //If the time passed is equals or bigger excute the callback function passed
         {
-            _callback?.Invoke(); //We add the question mark to make sure that the callback is not null, otherwise we would find an error trying to execute it
             _isTimerRunning = false;
+            _callback?.Invoke(); //We add the question mark to make sure that the callback is not null, otherwise we would find an error trying to execute it
         }
     }
 
     public void StartTimer()
     {
         _isTimerRunning = true;
+        _timer = 0f; 
+    }
+
+    public void StopTimer()
+    {
+        _isTimerRunning = false;
     }
 
     public void PauseTimer()
