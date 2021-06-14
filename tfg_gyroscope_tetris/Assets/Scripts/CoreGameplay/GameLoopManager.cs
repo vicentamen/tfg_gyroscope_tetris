@@ -93,7 +93,6 @@ public class GameLoopManager : MonoBehaviour
     /// </summary>
     private void CorePieceLoop()
     {
-        Debug.LogWarning("Fall");
         //Move piece
         _activePiece.MovePiece(Vector2.down, playfield, _mainLoop.StartTimer, OnPiecePlaced);
             //Who is moving the piece? We said it shold be the piece itself

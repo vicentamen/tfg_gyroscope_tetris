@@ -19,12 +19,54 @@ public class PieceBase : MonoBehaviour
 
 
     [SerializeField] private Transform[] _pieceBlocks;
+    private Transform[,] _pieceGrid; //Grid of the pieces blocks as they would appear in the playfield board the grid gets rotated
+
     public Transform[] pieceBlocks { get => _pieceBlocks; }
 
     public void InitPiece(PlayfieldGrid playfield)
     {
+        BuildPieceGrid();
         //Change piece size to fit the board size
         UpdatePieceSize(playfield.cellSize);
+    }
+
+    private void BuildPieceGrid()
+    {
+        //Create the grid
+        float maxX = -Mathf.Infinity;
+        float minX = Mathf.Infinity;
+
+        float maxY = -Mathf.Infinity;
+        float minY = Mathf.Infinity;
+        foreach(Transform block in _pieceBlocks)
+        {
+            if (block.position.x > maxX)
+                maxX = block.transform.position.x;
+            else if (block.position.x < minX)
+                minX = block.transform.position.x;
+
+            if (block.position.y > maxY)
+                maxY = block.position.y;
+            else if (block.position.y < minY)
+                minY = block.transform.position.y;
+        }
+
+        int columns = Mathf.RoundToInt(maxX - minX) + 1; //We have to add the cell size to the substraction
+        int rows = Mathf.RoundToInt(maxY - minY) + 1;
+        _pieceGrid = new Transform[columns, rows];
+
+        //Distribute the pieces on the grid
+        foreach(Transform block in _pieceBlocks) //Math taken from Playfield.FromWorldPointToGridPosition
+        {
+            float percentX = (block.position.x + columns / 2f) / columns;
+            float percentY = (block.position.y + rows / 2f) / rows;
+            percentX = Mathf.Clamp01(percentX);
+            percentY = Mathf.Clamp01(percentY);
+
+            int i = Mathf.RoundToInt((columns - 1) * percentX);
+            int j = Mathf.RoundToInt((rows - 1) * percentY);
+            _pieceGrid[i, j] = block; 
+        }
     }
 
     #region PIECE_APPEAREANCE
@@ -60,7 +102,7 @@ public class PieceBase : MonoBehaviour
         float y = transform.position.y + (Mathf.Clamp(moveDir.y, -1, 0) * playfield.gridData.cellSize);
         //Check collisions
         //Check if the piece was going to fall outside the screen and place it if true
-        if (playfield.IsOutOfBounds(new Vector3(x, y, 0)))
+        if (HasCollidedAndBeenPlaced(new Vector3(x, y, 0), moveDir, playfield))
             movementResult = onMoveFailure;
         else
             movementResult = onMoveSuccess;
@@ -72,6 +114,37 @@ public class PieceBase : MonoBehaviour
         transform.position = new Vector3(x, y, transform.position.z);
         //Execute movement result
         movementResult?.Invoke();
+    }
+
+    private bool HasCollidedAndBeenPlaced(Vector3 pos, Vector2 moveDir, Playfield playfield)
+    {
+        if (playfield.IsOutOfBounds(pos)) //Check if the piece has arrived to the lowe side of the screen
+            return true;
+
+        //Check collisions of the board -- Depending on the rotation and direction the piece should start the check in one direction or another
+        //If Has to rotate, rotate it and return false
+        //If it has to be placed return true
+        if (moveDir.y < 0) //Going downwards
+        {
+            for(int i = 0; i < _pieceGrid.GetLength(0); i++)
+            {
+                for(int j = 0; j < _pieceGrid.GetLength(1); j++)
+                {
+                    if(_pieceGrid[i, j] != null)
+                    {
+                        //Calculate new block position
+                        float x = pos.x + ((i - 1) * playfield.gridData.cellSize);
+                        float y = pos.y + ((j - 1) * playfield.gridData.cellSize);
+                        if (!playfield.IsNodeEmpty(playfield.FromWorldToGridPosition(new Vector2(x, y))))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     public virtual void RotatePiece(Vector2 moveDir)

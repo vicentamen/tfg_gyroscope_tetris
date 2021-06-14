@@ -6,39 +6,24 @@ public class Playfield : MonoBehaviour
 {
     [SerializeField, Tooltip("Playfield grid data")]
     private PlayfieldGrid _gridData = null;
+
+    [Header("BLOCK PROPERTIES")]
+    [SerializeField] private Pool _blocksPool;
     [SerializeField, Tooltip("Reference to the container for the blocks gameobject placed on the playfield")]
     private Transform _blocksContainer;
-    [SerializeField]
-    private Transform _backgroundImage;
-    [Header("BLOCK PROPERTIES")]
-    [SerializeField]
-    private Pool _blocksPool;
 
     public PlayfieldGrid gridData { get => _gridData; }
 
     //Gotta have to save the grid state somewhere and the blocks linked to the positions
-    private SpriteRenderer[,] _board; //It probably needs to be a block matrix. =========== WILL NEED TO FIND A WAY TO SAVE THE OBSTACLES POSITION IN THE BOARD ==============\\
+    private Block[,] _board; //It probably needs to be a block matrix. =========== WILL NEED TO FIND A WAY TO SAVE THE OBSTACLES POSITION IN THE BOARD ==============\\
 
     //Piece placement management
     private Vector2Int _pieceSpawnGridPosition;
 
     public void Initialize()
     {
-        UpdateBackgroundImage();
-
+        _board = new Block[_gridData.columns, _gridData.rows];
         _pieceSpawnGridPosition = new Vector2Int(Mathf.RoundToInt(_gridData.columns / 2), (_gridData.rows < 26)? (_gridData.rows - 2) : 24);
-    }
-
-    private void UpdateBackgroundImage()
-    {
-        SpriteRenderer image;
-        if(_backgroundImage.TryGetComponent(out image))
-        {
-            image.size = new Vector2(_gridData.worldSizeX + (_gridData.cellSize/2f), _gridData.worldSizeY); //Update Image Size
-        }
-
-        //Update image position
-        //_backgroundImage.transform.position = this.transform.position + (Vector3.down * (_gridData.cellSize/2f));
     }
 
     public Vector3 GetPieceSpawnWorldPosition(bool isPivotOffsetted)
@@ -54,10 +39,11 @@ public class Playfield : MonoBehaviour
         {
             Block newBlock = _blocksPool.GetItem().GetComponent<Block>();
             newBlock.PlaceBlock(pieceBlock.position, Vector3.one * _gridData.cellSize, piece);
-            //Now I should save the block somewhere so I can delete it later
+
+            //Save the block in the board
+            Vector2Int index = FromWorldToGridPosition(pieceBlock.position);
+            _board[index.x, index.y] = newBlock;
         }
-        //Will probably need a pool of bloks if I go with this solution
-        //Spawn blocks
     }
 
 
@@ -73,6 +59,11 @@ public class Playfield : MonoBehaviour
         int y = Mathf.RoundToInt((gridData.rows - 1) * percentY);
 
         return new Vector2Int(x, y);
+    }
+
+    public bool IsNodeEmpty(Vector2Int nodeIndex)
+    {
+        return _board[nodeIndex.x, nodeIndex.y] == null; //return true if empty
     }
 
     public Vector3 FromGridToWorldPosition(Vector2Int gridPosition) //Might not need this function
