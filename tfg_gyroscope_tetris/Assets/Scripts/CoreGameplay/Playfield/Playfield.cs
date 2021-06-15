@@ -74,18 +74,18 @@ public class Playfield : MonoBehaviour
         return new Vector3(x, y, this.transform.position.z);
     }
 
-    public bool IsOutOfBounds(Vector3 pos)
+    public bool IsPieceOutOfBounds(Rect pieceRect)
     {
-        if (pos.x < this.transform.position.x - (_gridData.worldSizeX / 2f) + (_gridData.cellSize / 2f))
+        if (pieceRect.xMin <= (transform.position.x - (_gridData.worldSizeX / 2f) + (_gridData.cellSize / 2f)))
             return true;
-        else if (pos.x > this.transform.position.x + (_gridData.worldSizeX / 2f) + (_gridData.cellSize / 2f))
+        else if ((pieceRect.xMax - 1) > (transform.position.x + (_gridData.worldSizeX / 2f) + (_gridData.cellSize / 2f)))
             return true;
-        else if (pos.y < this.transform.position.y - (_gridData.worldSizeY / 2f) + (_gridData.cellSize / 2f))
+        else if (pieceRect.yMin <= (transform.position.y - (_gridData.worldSizeY / 2f) + (_gridData.cellSize / 2f)))
             return true;
-        else if (pos.y > this.transform.position.y + (_gridData.worldSizeY / 2f) + (_gridData.cellSize / 2f))
+        else if (pieceRect.yMax > (transform.position.y + (_gridData.worldSizeY / 2f) + (_gridData.cellSize / 2f)))
             return true;
 
-        return false;
+        return false; //if none of the above is true then the piece is not out of bonds
     }
     #endregion
 

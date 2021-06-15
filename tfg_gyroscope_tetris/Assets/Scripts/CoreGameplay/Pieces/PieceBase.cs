@@ -69,6 +69,18 @@ public class PieceBase : MonoBehaviour
         }
     }
 
+    public void Enable()
+    {
+        //reset the piece rotation here
+        gameObject.SetActive(true);
+    }
+
+    public void Disable()
+    {
+        //animate piece somewhere in here
+        gameObject.SetActive(false);
+    }
+
     #region PIECE_APPEAREANCE
     private void UpdatePieceSize(float cellSize)
     {
@@ -82,69 +94,59 @@ public class PieceBase : MonoBehaviour
     #endregion
 
     #region MOVEMENT_&_ROTATION_MANAGEMENT
-    //Why should the piece be controlling the movement and rotation? because they hold the info
-    //Because each piece can hold the special rules that apply to them, otherwise the loop manager, piece manager or playfield may become way to complex
-    /// <summary>
-    /// Move the piece in the desired direction
-    /// </summary>
-    /// <param name="moveDir">Vector with the direction of the movement</param>
-    /// <param name="playfield">Reference to the playfield manager</param>
-    /// <param name="onMoveSuccess">What to do if the piece has been successfully moved</param>
-    /// <param name="onMoveFailure">What to do if the piece has no moved succcessfuly (has been placed)</param>
-    public virtual void MovePiece(Vector2 moveDir, Playfield playfield, UnityAction onMoveSuccess, UnityAction onMoveFailure)
+    public bool Move(Vector2 moveDir, Playfield playfield)
     {
-        UnityAction movementResult;
-        //Move piece
-        //Calculate the new piece position
-        float x = transform.position.x + (Mathf.Clamp(moveDir.x, -1, 1) * playfield.gridData.cellSize); //current position + (clamped Input * grid cellsize)
-        x = Mathf.Clamp(x, -playfield.gridData.worldSizeX / 2f, playfield.gridData.worldSizeX / 2f); //Clamp to the borders of the screen
-
+        //Calculate new piece position
+        float x = transform.position.x + (Mathf.Clamp(moveDir.x, -1, 1) * playfield.gridData.cellSize);
         float y = transform.position.y + (Mathf.Clamp(moveDir.y, -1, 0) * playfield.gridData.cellSize);
+
+        //Check if it is out of the borders -- Vertical and horizontal have to be checked separately because it can lead to errors when moving horizontal and vertical at the same time
+        if(playfield.IsPieceOutOfBounds(GetPieceRect(new Vector2(x, transform.position.y))))//On horizontal movement
+            x = transform.position.x;
+
+        if (moveDir.y < 0 && playfield.IsPieceOutOfBounds(GetPieceRect(new Vector2(transform.position.x, y)))) //if its moving down
+            return false;
+        
         //Check collisions
-        //Check if the piece was going to fall outside the screen and place it if true
-        if (HasCollidedAndBeenPlaced(new Vector3(x, y, 0), moveDir, playfield))
-            movementResult = onMoveFailure;
-        else
-            movementResult = onMoveSuccess;
-
-        y = Mathf.Clamp(y, -playfield.gridData.worldSizeY / 2f, playfield.gridData.worldSizeY / 2f); //The y is clamped later we need to know if the piece was going to fall outside the 
-
-
-        //Move Piece
-        transform.position = new Vector3(x, y, transform.position.z);
-        //Execute movement result
-        movementResult?.Invoke();
-    }
-
-    private bool HasCollidedAndBeenPlaced(Vector3 pos, Vector2 moveDir, Playfield playfield)
-    {
-        if (playfield.IsOutOfBounds(pos)) //Check if the piece has arrived to the lowe side of the screen
-            return true;
-
-        //Check collisions of the board -- Depending on the rotation and direction the piece should start the check in one direction or another
-        //If Has to rotate, rotate it and return false
-        //If it has to be placed return true
-        if (moveDir.y < 0) //Going downwards
+        if(CheckRotation(new Vector3(x, y, 0), playfield))
         {
-            for(int i = 0; i < _pieceGrid.GetLength(0); i++)
+
+        }
+            
+
+        transform.position = new Vector3(x, y, transform.position.z); //Move piece
+        return true;
+    }
+    
+   private bool CheckRotation(Vector3 pos, Playfield playfield)
+    {
+        for (int i = 0; i < _pieceGrid.GetLength(0); i++)
+        {
+            for (int j = 0; j < _pieceGrid.GetLength(1); j++)
             {
-                for(int j = 0; j < _pieceGrid.GetLength(1); j++)
+                if (_pieceGrid[i, j] != null)
                 {
-                    if(_pieceGrid[i, j] != null)
+                    //Calculate new block position
+                    float x = pos.x + ((i - 1) * playfield.gridData.cellSize);
+                    float y = pos.y + ((j - 1) * playfield.gridData.cellSize);
+                    if (!playfield.IsNodeEmpty(playfield.FromWorldToGridPosition(new Vector2(x, y))))
                     {
-                        //Calculate new block position
-                        float x = pos.x + ((i - 1) * playfield.gridData.cellSize);
-                        float y = pos.y + ((j - 1) * playfield.gridData.cellSize);
-                        if (!playfield.IsNodeEmpty(playfield.FromWorldToGridPosition(new Vector2(x, y))))
-                        {
-                            return true;
-                        }
+                        return false; //There is no possible rotation and so the piece has to be placed
                     }
                 }
             }
         }
 
-        return false;
+        return true;
+    }
+
+    private Rect GetPieceRect(Vector3 rectPosition)
+    {
+        float width = _pieceGrid.GetLength(0) * transform.localScale.x;
+        float height = _pieceGrid.GetLength(1) * transform.localScale.y;
+
+        Vector3 pos = rectPosition + (Vector3.up * (transform.localScale.y / 2f)); //Offset the rect to match the pivot
+        return new Rect(pos, new Vector2(width, height)); 
     }
 
     public virtual void RotatePiece(Vector2 moveDir)
@@ -152,4 +154,14 @@ public class PieceBase : MonoBehaviour
         //Check rotation
     }
     #endregion
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(0, 1, 0, 0.5f);
+        if(_pieceGrid != null)
+        {
+            Rect pieceRect = GetPieceRect(transform.position);
+            Gizmos.DrawCube(pieceRect.position, new Vector3(pieceRect.width, pieceRect.height));
+        }
+    }
 }

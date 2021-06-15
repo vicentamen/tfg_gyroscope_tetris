@@ -46,7 +46,7 @@ public class GameLoopManager : MonoBehaviour
         //Initialize Score manager
         //Initialize Loop timers
         _playerInputLoop = new Timer(_gameLoopData.timeBetweenInputs, UpdatePlayerInput); //Timers will require to be manually started from code
-        _mainLoop = new Timer(_gameLoopData.timeBetweenFall, CorePieceLoop);
+        _mainLoop = new Timer(_gameLoopData.timeBetweenFall, ActivePieceFall);
 
         _isPaused = false;
         _isGameOver = false;
@@ -61,7 +61,7 @@ public class GameLoopManager : MonoBehaviour
         GetNewActivePiece();
         //Start loop timers
         _mainLoop.StartTimer();
-       // _playerInputLoop.StartTimer();
+        _playerInputLoop.StartTimer();
     }
     #endregion
 
@@ -71,7 +71,7 @@ public class GameLoopManager : MonoBehaviour
     {
         if (!_isGameOver && !_isPaused) //Will have to check the game state after each one on the loops have been tested
         {
-            //_playerInputLoop.Update();
+            _playerInputLoop.Update();
             _mainLoop.Update();
         }
     }
@@ -81,7 +81,11 @@ public class GameLoopManager : MonoBehaviour
     /// </summary>
     private void UpdatePlayerInput()
     {
-        Debug.LogWarning("Reading player Input every" + _gameLoopData.timeBetweenInputs + " seconds");
+        if (_activePiece.Move(new Vector2(_inputSystem.GetHorizontal(), _inputSystem.GetVertical()), playfield))
+            _playerInputLoop.StartTimer();
+        else
+            OnPiecePlaced();
+        //_activePiece.MovePiece(new Vector2(_inputSystem.GetHorizontal(), _inputSystem.GetVertical()), playfield, _playerInputLoop.StartTimer, OnPiecePlaced);
         //Get Player Input
         //Update piece state -- Does the piece need to be rotated or not?
         //Check game state -- Is game over? -- has any line been completed? How many of them?
@@ -91,10 +95,14 @@ public class GameLoopManager : MonoBehaviour
     /// <summary>
     /// Make the active piece fall one line and updates the game state
     /// </summary>
-    private void CorePieceLoop()
+    private void ActivePieceFall()
     {
         //Move piece
-        _activePiece.MovePiece(Vector2.down, playfield, _mainLoop.StartTimer, OnPiecePlaced);
+        if (_activePiece.Move(Vector2.down, playfield)) //The has been successful
+            _mainLoop.StartTimer();
+        else 
+            OnPiecePlaced();//The movement has been a failure
+
             //Who is moving the piece? We said it shold be the piece itself
         //Is the piece placed?  --> The piece will need to return a true or false, or we can send two unityActions
             // ---> One UnityAction fow when the piece has been placed
@@ -115,7 +123,7 @@ public class GameLoopManager : MonoBehaviour
         //Place Piece
         playfield.PlacePiece(_activePiece);
 
-        _activePiece.gameObject.SetActive(false);
+        _activePiece.Disable();
         //Add blocks to the playfield
         GetNewActivePiece();
         //RestartTimers
@@ -148,7 +156,7 @@ public class GameLoopManager : MonoBehaviour
     {
         _activePiece = _pieceManager.GetNextPiece();
         _activePiece.transform.position = playfield.GetPieceSpawnWorldPosition(_activePiece.isPivotOffsetted);
-        _activePiece.gameObject.SetActive(true);
+        _activePiece.Enable();
     }
 
     private void MoveActivePiece(Vector2 moveDirection, UnityAction onPiecePlaced)
