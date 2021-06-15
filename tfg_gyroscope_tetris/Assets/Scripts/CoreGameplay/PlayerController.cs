@@ -72,14 +72,23 @@ public class PlayerController : MonoBehaviour
     private bool MoveActivePiece(Vector2 moveDir)
     {
         //Calculate new piece position
-        float x = _activePiece.transform.position.x + (Mathf.Clamp(moveDir.x, -1, 1) * PlayfieldBoard.gridData.cellSize);
-        float y = _activePiece.transform.position.y + (Mathf.Clamp(moveDir.y, -1, 0) * PlayfieldBoard.gridData.cellSize);
+        float x = _activePiece.transform.position.x + (Mathf.Clamp(moveDir.x, -1, 1) * Playfield.gridData.cellSize);
+        float y = _activePiece.transform.position.y + (Mathf.Clamp(moveDir.y, -1, 0) * Playfield.gridData.cellSize);
 
         //Check if the piece is out of borders
-        if (PlayfieldBoard.IsPieceOutOfBounds(_activePiece.GetRect(new Vector2(x, _activePiece.transform.position.y))))
+        if (Playfield.IsPieceOutOfBounds(_activePiece.GetRect(new Vector2(x, _activePiece.transform.position.y))))
             x = _activePiece.transform.position.x;
-        if (moveDir.y < 0 && PlayfieldBoard.IsPieceOutOfBounds(_activePiece.GetRect(new Vector2(_activePiece.transform.position.x, y))))
+        if (moveDir.y < 0 && Playfield.IsPieceOutOfBounds(_activePiece.GetRect(new Vector2(_activePiece.transform.position.x, y))))
             return false; //Cannot move and has to be placed
+
+        //Check piece collisions
+        if (moveDir.x < 0 && CheckCollisionLeft(new Vector2(x, _activePiece.transform.position.y), _activePiece.pieceGrid))
+            x = _activePiece.transform.position.x;
+        else if (moveDir.x > 0 && CheckCollisionRight(new Vector2(x, _activePiece.transform.position.y), _activePiece.pieceGrid))
+            x = _activePiece.transform.position.x;
+
+        if (moveDir.y < 0 && CheckCollisionDown(new Vector2(_activePiece.transform.position.x, y), _activePiece.pieceGrid))
+            return false; //If there is collision place piece SHOULD CHECK ROTATIONS FIRST
 
         _activePiece.Move(new Vector3(x, y, _activePiece.transform.position.z)); //Move piece to new position
         return true; //The movement has been a success
@@ -87,10 +96,73 @@ public class PlayerController : MonoBehaviour
 
     public void SetNewActivePiece(PieceBase newPiece)
     {
-        newPiece.transform.position = PlayfieldBoard.GetPieceSpawnWorldPosition(newPiece.isPivotOffsetted);
+        newPiece.transform.position = Playfield.GetPieceSpawnWorldPosition(newPiece.isPivotOffsetted);
         newPiece.Enable();
 
         _activePiece = newPiece;
     }
+    #region PIECE_COLLISIONS_CHECKS
+    private bool CheckCollisionDown(Vector3 piecePos, Transform[,] pieceGrid)
+    {
+        for (int i = 0; i < pieceGrid.GetLength(0); i++) //From left to right
+        {
+            for (int j = 0; j < pieceGrid.GetLength(1); j++) //From bot to top
+            {
+                if (pieceGrid[i, j] != null)//The position is not empty
+                {
+                    float x = piecePos.x + ((i - 1) * Playfield.gridData.cellSize);
+                    float y = piecePos.y + (j * Playfield.gridData.cellSize);
+                    if(!Playfield.IsNodeEmpty(Playfield.FromWorldToGridPosition(new Vector2(x, y))))
+                    {
+                        //Check possible rotations
+                        return true; //There is no possible rotation and the piece has to be placed
+                    }
+                }
+            }
+        }
+
+        return false; //The piece is not colliding
+    }
+
+    private bool CheckCollisionLeft(Vector3 piecePos, Transform[,] pieceGrid)
+    {
+        for(int j = 0; j < pieceGrid.GetLength(1); j++) //From bot to top
+        {
+            for (int i = 0; i < pieceGrid.GetLength(0); i++) //From left to right
+            {
+                if(pieceGrid[i, j] != null)
+                {
+                    float x = piecePos.x + ((i - 1) * Playfield.gridData.cellSize);
+                    float y = piecePos.y + (j * Playfield.gridData.cellSize);
+                    if (!Playfield.IsNodeEmpty(Playfield.FromWorldToGridPosition(new Vector2(x, y))))
+                    {
+                        return true; //There is no possible rotation and the piece has to be placed
+                    }
+                }
+            }
+        }
+        return false; //The piece is no colliding
+    }
+
+    private bool CheckCollisionRight(Vector3 piecePos, Transform[,] pieceGrid)
+    {
+        for (int j = 0; j < pieceGrid.GetLength(1); j++) //From bot to top
+        {
+            for (int i = pieceGrid.GetLength(0) - 1; i >= 0; i--) //From right to left
+            {
+                if (pieceGrid[i, j] != null)
+                {
+                    float x = piecePos.x + ((i - 1) * Playfield.gridData.cellSize);
+                    float y = piecePos.y + (j * Playfield.gridData.cellSize);
+                    if (!Playfield.IsNodeEmpty(Playfield.FromWorldToGridPosition(new Vector2(x, y))))
+                    {
+                        return true; //There is no possible rotation and the piece has to be placed
+                    }
+                }
+            }
+        }
+        return false; //The piece is not colliding
+    }
+    #endregion
     #endregion
 }

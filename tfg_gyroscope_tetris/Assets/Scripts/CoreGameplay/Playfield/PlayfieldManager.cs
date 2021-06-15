@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Playfield : MonoBehaviour
+public class PlayfieldManager : MonoBehaviour
 {
     [SerializeField, Tooltip("Playfield grid data")]
     private PlayfieldGrid _gridData = null;
@@ -25,7 +25,7 @@ public class Playfield : MonoBehaviour
         _board = new Block[_gridData.columns, _gridData.rows];
         _pieceSpawnGridPosition = new Vector2Int(Mathf.RoundToInt(_gridData.columns / 2), (_gridData.rows < 26) ? (_gridData.rows - 2) : 24);
 
-        PlayfieldBoard.SetupGameboard(this);
+        Playfield.SetupGameboard(this);
     }
 
     public Vector3 GetPieceSpawnWorldPosition(bool isPivotOffsetted)
@@ -117,12 +117,12 @@ public class Playfield : MonoBehaviour
     }
 }
 
-public class PlayfieldBoard
+public class Playfield
 {
-    private static Playfield _playfield;
+    private static PlayfieldManager _playfield;
     public static PlayfieldGrid gridData { get => _playfield.gridData; }
     
-    public static void SetupGameboard(Playfield playfield)
+    public static void SetupGameboard(PlayfieldManager playfield)
     {
         _playfield = playfield;
     }

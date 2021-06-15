@@ -104,7 +104,7 @@ public class PieceBase : MonoBehaviour
         transform.rotation = Quaternion.Euler(newRotation);
     }
     
-   private bool CheckRotation(Vector3 pos, Playfield playfield)
+   private bool CheckRotation(Vector3 pos, PlayfieldManager playfield)
     {
         for (int i = 0; i < _pieceGrid.GetLength(0); i++)
         {
@@ -147,8 +147,20 @@ public class PieceBase : MonoBehaviour
         Gizmos.color = new Color(0, 1, 0, 0.5f);
         if(_pieceGrid != null)
         {
-            Rect pieceRect = GetRect(transform.position);
-            Gizmos.DrawCube(pieceRect.position, new Vector3(pieceRect.width, pieceRect.height));
+            /*Rect pieceRect = GetRect(transform.position);
+            Gizmos.DrawCube(pieceRect.position, new Vector3(pieceRect.width, pieceRect.height));*/
+            for (int j = 0; j < pieceGrid.GetLength(1); j++) //From bot to top
+            {
+                for (int i = 0; i < pieceGrid.GetLength(0); i++) //From left to right
+                {
+                    if (pieceGrid[i, j] != null)
+                    {
+                        float x = transform.position.x + ((i - 1) * Playfield.gridData.cellSize);
+                        float y = transform.position.y + (j * Playfield.gridData.cellSize);
+                        Gizmos.DrawCube(new Vector3(x, y), Vector3.one);
+                    }
+                }
+            }
         }
     }
 }

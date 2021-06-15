@@ -10,7 +10,7 @@ public class GameLoopManager : MonoBehaviour
 {
     [SerializeField] private CoreLoopData _gameLoopData;
     [SerializeField] private PlayerController _playerController;
-    [SerializeField] private Playfield _playfield;
+    [SerializeField] private PlayfieldManager _playfield;
     [SerializeField] private PieceManager _pieceManager;
 
     //Game state variables
