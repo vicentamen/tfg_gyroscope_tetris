@@ -20,7 +20,7 @@ public class PieceBase : MonoBehaviour
 
     [SerializeField] private Transform[] _pieceBlocks;
     private Transform[,] _pieceGrid; //Grid of the pieces blocks as they would appear in the playfield board the grid gets rotated
-
+    public Transform[,] pieceGrid { get => GetPieceGrid(); }
     public Transform[] pieceBlocks { get => _pieceBlocks; }
 
     public void InitPiece(PlayfieldGrid playfield)
@@ -94,28 +94,14 @@ public class PieceBase : MonoBehaviour
     #endregion
 
     #region MOVEMENT_&_ROTATION_MANAGEMENT
-    public bool Move(Vector2 moveDir, Playfield playfield)
+    public void Move(Vector3 newPos)
     {
-        //Calculate new piece position
-        float x = transform.position.x + (Mathf.Clamp(moveDir.x, -1, 1) * playfield.gridData.cellSize);
-        float y = transform.position.y + (Mathf.Clamp(moveDir.y, -1, 0) * playfield.gridData.cellSize);
+        transform.position = newPos;
+    }
 
-        //Check if it is out of the borders -- Vertical and horizontal have to be checked separately because it can lead to errors when moving horizontal and vertical at the same time
-        if(playfield.IsPieceOutOfBounds(GetPieceRect(new Vector2(x, transform.position.y))))//On horizontal movement
-            x = transform.position.x;
-
-        if (moveDir.y < 0 && playfield.IsPieceOutOfBounds(GetPieceRect(new Vector2(transform.position.x, y)))) //if its moving down
-            return false;
-        
-        //Check collisions
-        if(CheckRotation(new Vector3(x, y, 0), playfield))
-        {
-
-        }
-            
-
-        transform.position = new Vector3(x, y, transform.position.z); //Move piece
-        return true;
+    public void Rotate(Vector3 newRotation)
+    {
+        transform.rotation = Quaternion.Euler(newRotation);
     }
     
    private bool CheckRotation(Vector3 pos, Playfield playfield)
@@ -140,7 +126,7 @@ public class PieceBase : MonoBehaviour
         return true;
     }
 
-    private Rect GetPieceRect(Vector3 rectPosition)
+    public Rect GetRect(Vector3 rectPosition)
     {
         float width = _pieceGrid.GetLength(0) * transform.localScale.x;
         float height = _pieceGrid.GetLength(1) * transform.localScale.y;
@@ -149,9 +135,10 @@ public class PieceBase : MonoBehaviour
         return new Rect(pos, new Vector2(width, height)); 
     }
 
-    public virtual void RotatePiece(Vector2 moveDir)
+    private Transform[,] GetPieceGrid()
     {
-        //Check rotation
+        //Create the piece grid rotated
+        return _pieceGrid;
     }
     #endregion
 
@@ -160,7 +147,7 @@ public class PieceBase : MonoBehaviour
         Gizmos.color = new Color(0, 1, 0, 0.5f);
         if(_pieceGrid != null)
         {
-            Rect pieceRect = GetPieceRect(transform.position);
+            Rect pieceRect = GetRect(transform.position);
             Gizmos.DrawCube(pieceRect.position, new Vector3(pieceRect.width, pieceRect.height));
         }
     }

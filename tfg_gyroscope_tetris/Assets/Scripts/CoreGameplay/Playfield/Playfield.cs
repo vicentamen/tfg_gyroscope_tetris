@@ -23,7 +23,9 @@ public class Playfield : MonoBehaviour
     public void Initialize()
     {
         _board = new Block[_gridData.columns, _gridData.rows];
-        _pieceSpawnGridPosition = new Vector2Int(Mathf.RoundToInt(_gridData.columns / 2), (_gridData.rows < 26)? (_gridData.rows - 2) : 24);
+        _pieceSpawnGridPosition = new Vector2Int(Mathf.RoundToInt(_gridData.columns / 2), (_gridData.rows < 26) ? (_gridData.rows - 2) : 24);
+
+        PlayfieldBoard.SetupGameboard(this);
     }
 
     public Vector3 GetPieceSpawnWorldPosition(bool isPivotOffsetted)
@@ -112,5 +114,41 @@ public class Playfield : MonoBehaviour
                 Gizmos.DrawCube(FromGridToWorldPosition(_pieceSpawnGridPosition), Vector3.one * _gridData.cellSize);
             }
         }
+    }
+}
+
+public class PlayfieldBoard
+{
+    private static Playfield _playfield;
+    public static PlayfieldGrid gridData { get => _playfield.gridData; }
+    
+    public static void SetupGameboard(Playfield playfield)
+    {
+        _playfield = playfield;
+    }
+
+    public static Vector2Int FromWorldToGridPosition(Vector2 worldPos)
+    {
+        return _playfield.FromWorldToGridPosition(worldPos);
+    }
+
+    public static Vector3 FromGridToWorldPosition(Vector2Int gridPosition) //Might not need this function
+    {
+        return _playfield.FromGridToWorldPosition(gridPosition);
+    }
+
+    public static Vector3 GetPieceSpawnWorldPosition(bool isPivotOffsetted)
+    {
+        return _playfield.GetPieceSpawnWorldPosition(isPivotOffsetted);
+    }
+
+    public static bool IsPieceOutOfBounds(Rect piece)
+    {
+        return _playfield.IsPieceOutOfBounds(piece);
+    }
+
+    public static bool IsNodeEmpty(Vector2Int index)
+    {
+        return _playfield.IsNodeEmpty(index);
     }
 }
