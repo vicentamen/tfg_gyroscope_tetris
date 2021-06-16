@@ -22,8 +22,7 @@ public class PieceBaseEditor : Editor
                 {
                     if(block.sprite != piece.blockSprite)
                     {
-                        EditorGUILayout.HelpBox("One or more of the blocks sprite does not match the pice block sprite", MessageType.Warning);
-                        break;
+                        block.sprite = piece.blockSprite;
                     }
                 }
             }
