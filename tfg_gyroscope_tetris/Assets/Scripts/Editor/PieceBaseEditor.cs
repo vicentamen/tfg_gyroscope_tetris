@@ -13,25 +13,9 @@ public class PieceBaseEditor : Editor
         if (piece.pieceBlocks == null || piece.pieceBlocks.Length < piece.transform.childCount)
             EditorGUILayout.HelpBox("The blocks list is empty or does not match the number of blocks inside the object", MessageType.Error);
 
-        if(piece.pieceBlocks != null)
-        {
-            for(int i = 0; i < piece.transform.childCount; i++)
-            {
-                SpriteRenderer block;
-                if(piece.transform.GetChild(i).TryGetComponent(out block))
-                {
-                    if(block.sprite != piece.blockSprite)
-                    {
-                        block.sprite = piece.blockSprite;
-                    }
-                }
-            }
-        }
 
         if (piece.menuPreviewSprite == null)
-        {
-            EditorGUILayout.HelpBox("The piece is missing the sprite for the menu preview", MessageType.Warning);
-        }
+            EditorGUILayout.HelpBox("The piece is missing the image for the menu preview", MessageType.Warning);
 
         base.OnInspectorGUI();
     }

@@ -103,28 +103,6 @@ public class PieceBase : MonoBehaviour
     {
         transform.rotation = Quaternion.Euler(newRotation);
     }
-    
-   private bool CheckRotation(Vector3 pos, PlayfieldManager playfield)
-    {
-        for (int i = 0; i < _pieceGrid.GetLength(0); i++)
-        {
-            for (int j = 0; j < _pieceGrid.GetLength(1); j++)
-            {
-                if (_pieceGrid[i, j] != null)
-                {
-                    //Calculate new block position
-                    float x = pos.x + ((i - 1) * playfield.gridData.cellSize);
-                    float y = pos.y + ((j - 1) * playfield.gridData.cellSize);
-                    if (!playfield.IsNodeEmpty(playfield.FromWorldToGridPosition(new Vector2(x, y))))
-                    {
-                        return false; //There is no possible rotation and so the piece has to be placed
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
 
     public Rect GetRect(Vector3 rectPosition)
     {
@@ -158,6 +136,24 @@ public class PieceBase : MonoBehaviour
                         float x = transform.position.x + ((i - 1) * Playfield.gridData.cellSize);
                         float y = transform.position.y + (j * Playfield.gridData.cellSize);
                         Gizmos.DrawCube(new Vector3(x, y), Vector3.one);
+                    }
+                }
+            }
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (_pieceBlocks != null)
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                SpriteRenderer block;
+                if (transform.GetChild(i).TryGetComponent(out block))
+                {
+                    if (block.sprite != blockSprite)
+                    {
+                        block.sprite = blockSprite;
                     }
                 }
             }
