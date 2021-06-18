@@ -10,8 +10,8 @@ public struct MoveAttempt
     public Vector3 position { get => _position; }
     private Vector3 _position;
 
-    public Vector3 rotation { get => _rotation; }
-    private Vector3 _rotation;
+    public ROTATION_TYPE rotation { get => _rotation; }
+    private ROTATION_TYPE _rotation;
 
     public PieceBase piece { get => _piece; }
     private PieceBase _piece;
@@ -25,7 +25,7 @@ public struct MoveAttempt
         _piece = piece;
 
         _position = piece.transform.position;
-        _rotation = _piece.transform.rotation.eulerAngles;
+        _rotation = ROTATION_TYPE.NONE;
 
         _state = MOVE_STATE.SUCCESS;
 
@@ -46,13 +46,6 @@ public struct MoveAttempt
         //Calculate new piece position
         float x = _piece.transform.position.x + (Mathf.Clamp(_moveDir.x, -1, 1) * Playfield.gridData.cellSize);
 
-        //Check if piece is inside of bounds
-        if (Playfield.IsPieceOutOfBounds(_piece.GetRect(new Vector2(x, _position.y)))) //If it is getting out of bounds clamp position
-        {
-            _state = MOVE_STATE.SUCCESS; //The piece can still keep moving, just not in the horizontal axis
-            return; //The position stays the same, and there is no need to keep checking, there is nothing els in that direction
-        }
-
         //Check for collisions on the movement direction
         if (_moveDir.x < 0)
             AttemptMoveLeft(x);
@@ -69,8 +62,16 @@ public struct MoveAttempt
             {
                 if (_piece.pieceGrid[i, j] != null)
                 {
-                    float blockX = x + ((i - 1) * Playfield.gridData.cellSize);
-                    float blockY = _position.y + (j * Playfield.gridData.cellSize);
+                    float offset = (piece.isPivotOffsetted) ? Playfield.gridData.cellSize / 2f : 0f;
+                    float blockX = x + ((i - 1) * Playfield.gridData.cellSize) - offset;
+                    float blockY = _position.y + ((j - 1) * Playfield.gridData.cellSize) - offset;
+                    Vector2 newPos = new Vector2(blockX, blockY);
+                    //Chekc if block will be out of bounds
+                    if (Playfield.IsPieceOutOfBounds(newPos))
+                    {
+                        _state = MOVE_STATE.SUCCESS;
+                        return;
+                    }
                     if (!Playfield.IsNodeEmpty(Playfield.FromWorldToGridPosition(new Vector2(blockX, blockY))))
                     {
                         collisionsCounter++; //Increase the collision counter
@@ -106,8 +107,16 @@ public struct MoveAttempt
             {
                 if (_piece.pieceGrid[i, j] != null)
                 {
-                    float blockX = x + ((i - 1) * Playfield.gridData.cellSize);
-                    float blockY = _position.y + (j * Playfield.gridData.cellSize);
+                    float offset = (piece.isPivotOffsetted) ? Playfield.gridData.cellSize / 2f : 0f;
+                    float blockX = x + ((i - 1) * Playfield.gridData.cellSize) - offset;
+                    float blockY = _position.y + ((j - 1) * Playfield.gridData.cellSize) - offset;
+                    Vector2 newPos = new Vector2(blockX, blockY);
+                    //Chekc if block will be out of bounds
+                    if (Playfield.IsPieceOutOfBounds(newPos))
+                    {
+                        _state = MOVE_STATE.SUCCESS;
+                        return;
+                    }
                     if (!Playfield.IsNodeEmpty(Playfield.FromWorldToGridPosition(new Vector2(blockX, blockY))))
                     {
                         collisionsCounter++; //Increase the collision counter
@@ -135,12 +144,6 @@ public struct MoveAttempt
     {
         //Calculate new vertical position for the piece
         float y = _piece.transform.position.y + (Mathf.Clamp(moveDir.y, -1, 0) * Playfield.gridData.cellSize);
-        //Check if it is out of bounds
-        if (Playfield.IsPieceOutOfBounds(_piece.GetRect(new Vector2(_position.x, y))))
-        {
-            _state = MOVE_STATE.FAILURE; //The piece cannot keep moving and has to be placed
-            return; //We don't need to keep checking
-        }
 
         //Check collisions on the playfield
         int collisionsCounter = 0;
@@ -150,9 +153,18 @@ public struct MoveAttempt
             {
                 if (_piece.pieceGrid[i, j] != null)
                 {
-                    float blockX = _position.x + ((i - 1) * Playfield.gridData.cellSize);
-                    float blockY = y + (j * Playfield.gridData.cellSize);
-                    if (!Playfield.IsNodeEmpty(Playfield.FromWorldToGridPosition(new Vector2(blockX, blockY))))//There has been a collision
+                    float offset = (piece.isPivotOffsetted) ? Playfield.gridData.cellSize / 2f : 0f;
+                    float blockX = _position.x + ((i - 1) * Playfield.gridData.cellSize) - offset;
+                    float blockY = y + ((j - 1) * Playfield.gridData.cellSize) - offset;
+                    Vector2 newPos = new Vector2(blockX, blockY);
+                    //Chekc if block will be out of bounds
+                    if(Playfield.IsPieceOutOfBounds(newPos))
+                    {
+                        _state = MOVE_STATE.FAILURE;
+                        return;
+                    }
+
+                    if (!Playfield.IsNodeEmpty(Playfield.FromWorldToGridPosition(newPos)))//There has been a collision
                     {
                         collisionsCounter++;
                         /*if (collisionsCounter >= _piece.pieceGrid.GetLength(0)) //If the collisions is bigger than half of the width then it cannot rotate or keep falling
@@ -183,4 +195,9 @@ public struct MoveAttempt
 public enum MOVE_STATE
 {
     SUCCESS, FAILURE
+}
+
+public enum ROTATION_TYPE
+{
+    NONE, LEFT, RIGHT
 }

@@ -31,7 +31,8 @@ public class PlayfieldManager : MonoBehaviour
     public Vector3 GetPieceSpawnWorldPosition(bool isPivotOffsetted)
     {
         //The result should change depending on wheter the pivot is offsetted or not
-        return FromGridToWorldPosition(_pieceSpawnGridPosition);
+        float offset = (isPivotOffsetted) ? _gridData.cellSize / 2f : 0f;
+        return FromGridToWorldPosition(_pieceSpawnGridPosition) - Vector3.one * offset;
     }
 
     public void PlacePiece(PieceBase piece)
@@ -76,18 +77,18 @@ public class PlayfieldManager : MonoBehaviour
         return new Vector3(x, y, this.transform.position.z);
     }
 
-    public bool IsPieceOutOfBounds(Rect pieceRect)
+    public bool IsBlockOutOfBounds(Vector3 pos)
     {
-        if (pieceRect.xMin <= (transform.position.x - (_gridData.worldSizeX / 2f) + (_gridData.cellSize / 2f)))
+        if (pos.x <= (transform.position.x - (_gridData.worldSizeX / 2f)))
             return true;
-        else if ((pieceRect.xMax - 1) > (transform.position.x + (_gridData.worldSizeX / 2f) + (_gridData.cellSize / 2f)))
+        else if (pos.x > (transform.position.x + (_gridData.worldSizeX / 2f)))
             return true;
-        else if (pieceRect.yMin <= (transform.position.y - (_gridData.worldSizeY / 2f) + (_gridData.cellSize / 2f)))
+        else if (pos.y <= (transform.position.y - (_gridData.worldSizeY / 2f)))
             return true;
-        else if (pieceRect.yMax > (transform.position.y + (_gridData.worldSizeY / 2f) + (_gridData.cellSize / 2f)))
+        else if (pos.y > (transform.position.y + (_gridData.worldSizeY / 2f)))
             return true;
 
-        return false; //if none of the above is true then the piece is not out of bonds
+        return false;
     }
     #endregion
 
@@ -142,9 +143,9 @@ public class Playfield
         return _playfield.GetPieceSpawnWorldPosition(isPivotOffsetted);
     }
 
-    public static bool IsPieceOutOfBounds(Rect piece)
+    public static bool IsPieceOutOfBounds(Vector2 pos)
     {
-        return _playfield.IsPieceOutOfBounds(piece);
+        return _playfield.IsBlockOutOfBounds(pos);
     }
 
     public static bool IsNodeEmpty(Vector2Int index)

@@ -15,3 +15,4 @@ MonoBehaviour:
   _pieces:
   - {fileID: 4264958095754240743, guid: a13240add0f041047a614c3050ab1dbc, type: 3}
   - {fileID: 4264958095754240743, guid: 2a10a7601a5c65043aa9c14799867489, type: 3}
+  - {fileID: 4264958095754240743, guid: 0d18827e53c29864186e6fa23b131a5a, type: 3}

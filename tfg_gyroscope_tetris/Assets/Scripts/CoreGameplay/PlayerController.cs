@@ -35,6 +35,9 @@ public class PlayerController : MonoBehaviour
     #region LOOP_MANAGEMENT
     public void UpdatePlayer()
     {
+        if (Input.GetKeyDown(KeyCode.R)) //Only for testing purposes
+            _activePiece.RotateLeft();
+
         _inputReadTimer.Update();
         _pieceFallTimer.Update();
     }
