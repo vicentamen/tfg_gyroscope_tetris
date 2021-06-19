@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: default_piece_set
   m_EditorClassIdentifier: 
   _pieces:
-  - {fileID: 4264958095754240743, guid: a13240add0f041047a614c3050ab1dbc, type: 3}
-  - {fileID: 4264958095754240743, guid: 2a10a7601a5c65043aa9c14799867489, type: 3}
   - {fileID: 4264958095754240743, guid: 0d18827e53c29864186e6fa23b131a5a, type: 3}
+  - {fileID: 4264958095754240743, guid: d1b8ed611357d704eaba7e64532a4af5, type: 3}
+  - {fileID: 4264958095754240743, guid: 76c16743251d1b243a61c86871efe79b, type: 3}
+  - {fileID: 4264958095754240743, guid: 809f20e5d2e7b9d42af7d37263bad423, type: 3}
+  - {fileID: 4264958095754240743, guid: eac8aea77558b94468dc59c47f4292a0, type: 3}
+  - {fileID: 4264958095754240743, guid: 2a10a7601a5c65043aa9c14799867489, type: 3}
+  - {fileID: 4264958095754240743, guid: a13240add0f041047a614c3050ab1dbc, type: 3}

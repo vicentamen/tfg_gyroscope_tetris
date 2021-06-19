@@ -173,8 +173,6 @@ public class PieceBase : MonoBehaviour
         Gizmos.color = new Color(0, 1, 0, 0.5f);
         if(_pieceGrid != null)
         {
-            /*Rect pieceRect = GetRect(transform.position);
-            Gizmos.DrawCube(pieceRect.position, new Vector3(pieceRect.width, pieceRect.height));*/
             for (int i = 0; i < pieceGrid.GetLength(0); i++) //From bot to top
             {
                 for (int j = 0; j < pieceGrid.GetLength(1); j++) //From left to right
@@ -182,15 +180,12 @@ public class PieceBase : MonoBehaviour
                     if (pieceGrid[i, j] != null)
                     {
                         float offset = (_isPivotOffsetted) ? Playfield.gridData.cellSize / 2f : 0f;
-                        float x = transform.position.x + ((i - 1) * Playfield.gridData.cellSize) - offset;
-                        float y = transform.position.y + ((j - 1) * Playfield.gridData.cellSize) - offset;
+                        float x = transform.position.x + (i - ((Mathf.Ceil(pieceGrid.GetLength(0) / 2) - (offset * 2))) * Playfield.gridData.cellSize) - offset;
+                        float y = transform.position.y + (j - ((Mathf.Ceil(pieceGrid.GetLength(1) / 2) - (offset * 2))) * Playfield.gridData.cellSize) - offset;
                         Gizmos.DrawCube(new Vector3(x, y), Vector3.one);
                     }
                 }
             }
-
-            Gizmos.color = Color.red;
-            //Gizmos.DrawSphere(pieceCenter, 0.3f);
         }
     }
 
