@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockSprite: {fileID: 21300000, guid: 9c06a533eabd3364288ee6a8406b417e, type: 3}
-  menuPreviewSprite: {fileID: 21300000, guid: 4135aa6a63090f44f8f25dd1a8fee15a, type: 3}
+  menuPreviewSprite: {fileID: 21300000, guid: 6fae5a834d8ef3544a90c0b28ad0cf71, type: 3}
   _isPivotOffsetted: 0
   _pieceBlocks:
   - {fileID: 4264958095714190229}

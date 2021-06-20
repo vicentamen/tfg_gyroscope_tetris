@@ -107,7 +107,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4264958095754240743}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4264958095714190229}
@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockSprite: {fileID: 21300000, guid: ee9546926e7584e4c93232c9342b62a2, type: 3}
-  menuPreviewSprite: {fileID: 21300000, guid: 4135aa6a63090f44f8f25dd1a8fee15a, type: 3}
+  menuPreviewSprite: {fileID: 21300000, guid: 959553d87039dc54c9643a34e132c31d, type: 3}
   _isPivotOffsetted: 1
   _pieceBlocks:
   - {fileID: 4264958095714190229}
