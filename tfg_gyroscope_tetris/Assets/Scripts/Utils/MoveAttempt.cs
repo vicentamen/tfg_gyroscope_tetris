@@ -62,9 +62,8 @@ public struct MoveAttempt
             {
                 if (_piece.pieceGrid[i, j] != null)
                 {
-                    float offset = (piece.isPivotOffsetted) ? Playfield.gridData.cellSize / 2f : 0f;
-                    float blockX = x + (i - ((Mathf.Ceil(_piece.pieceGrid.GetLength(0) / 2) - (offset * 2))) * Playfield.gridData.cellSize) - offset;
-                    float blockY = _position.y + (j - ((Mathf.Ceil(_piece.pieceGrid.GetLength(0) / 2) - (offset * 2))) * Playfield.gridData.cellSize) - offset;
+                    float blockX = x + (i - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
+                    float blockY = _position.y + (j - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
                     Vector2 newPos = new Vector2(blockX, blockY);
                     //Chekc if block will be out of bounds
                     if (Playfield.IsPieceOutOfBounds(newPos))
@@ -107,9 +106,8 @@ public struct MoveAttempt
             {
                 if (_piece.pieceGrid[i, j] != null)
                 {
-                    float offset = (piece.isPivotOffsetted) ? Playfield.gridData.cellSize / 2f : 0f;
-                    float blockX = x + (i - ((Mathf.Ceil(_piece.pieceGrid.GetLength(0) / 2) - (offset * 2))) * Playfield.gridData.cellSize) - offset;
-                    float blockY = _position.y + (j - ((Mathf.Ceil(_piece.pieceGrid.GetLength(0) / 2) - (offset * 2))) * Playfield.gridData.cellSize) - offset;
+                    float blockX = x + (i - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
+                    float blockY = _position.y + (j - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
                     Vector2 newPos = new Vector2(blockX, blockY);
                     //Chekc if block will be out of bounds
                     if (Playfield.IsPieceOutOfBounds(newPos))
@@ -153,9 +151,8 @@ public struct MoveAttempt
             {
                 if (_piece.pieceGrid[i, j] != null)
                 {
-                    float offset = (piece.isPivotOffsetted) ? Playfield.gridData.cellSize / 2f : 0f;
-                    float blockX = _position.x + (i - ((Mathf.Ceil(_piece.pieceGrid.GetLength(0) / 2) - (offset * 2))) * Playfield.gridData.cellSize) - offset;
-                    float blockY = y + (j - ((Mathf.Ceil(_piece.pieceGrid.GetLength(0) / 2) - (offset * 2))) * Playfield.gridData.cellSize) - offset;
+                    float blockX = _position.x + (i - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
+                    float blockY = y + (j - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
                     Vector2 newPos = new Vector2(blockX, blockY);
                     //Chekc if block will be out of bounds
                     if(Playfield.IsPieceOutOfBounds(newPos))

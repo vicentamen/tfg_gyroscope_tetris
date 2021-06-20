@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: test_set
   m_EditorClassIdentifier: 
   _pieces:
-  - {fileID: 4264958095754240743, guid: 809f20e5d2e7b9d42af7d37263bad423, type: 3}
-  - {fileID: 4264958095754240743, guid: 928beb6b4ff3fac45ac8cd8747ce74b8, type: 3}
+  - {fileID: 4264958095754240743, guid: 0d18827e53c29864186e6fa23b131a5a, type: 3}

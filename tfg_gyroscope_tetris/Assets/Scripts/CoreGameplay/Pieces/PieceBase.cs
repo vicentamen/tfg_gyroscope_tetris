@@ -179,9 +179,8 @@ public class PieceBase : MonoBehaviour
                 {
                     if (pieceGrid[i, j] != null)
                     {
-                        float offset = (_isPivotOffsetted) ? Playfield.gridData.cellSize / 2f : 0f;
-                        float x = transform.position.x + (i - ((Mathf.Ceil(pieceGrid.GetLength(0) / 2) - (offset * 2))) * Playfield.gridData.cellSize) - offset;
-                        float y = transform.position.y + (j - ((Mathf.Ceil(pieceGrid.GetLength(1) / 2) - (offset * 2))) * Playfield.gridData.cellSize) - offset;
+                        float x = transform.position.x + (i - ((pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
+                        float y = transform.position.y + (j - ((pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
                         Gizmos.DrawCube(new Vector3(x, y), Vector3.one);
                     }
                 }
