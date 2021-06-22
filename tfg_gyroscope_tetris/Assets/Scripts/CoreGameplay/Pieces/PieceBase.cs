@@ -114,24 +114,19 @@ public class PieceBase : MonoBehaviour
         transform.position = newPos;
     }
 
-    /// <summary>
-    /// Rotates the piece depending on the rotation direction applied
-    /// </summary>
-    /// <param name="rotation"></param>
-    public void Rotate(ROTATION_DIRECTION rotation)
+    public void Rotate(float rotation)
     {
-        switch (rotation)
-        {
-            case ROTATION_DIRECTION.RIGHT:
-                RotateRight();
-                break;
-            case ROTATION_DIRECTION.LEFT: 
-                RotateLeft();
-                break;
-            case ROTATION_DIRECTION.NONE:
-            default:
-                break;
-        }
+        transform.rotation = Quaternion.Euler(0, 0, rotation);
+
+        //Rotate grid
+        if (rotation >= 90f && rotation < 180f)
+            _rotatedGrid = GetRotatedGrid90();
+        else if (rotation >= 180f && rotation < 270)
+            _rotatedGrid = GetRotatedGrid180();
+        else if (rotation >= 270 && rotation < 360)
+            _rotatedGrid = GetRotatedGridMinus90();
+        else
+            _rotatedGrid = _pieceGrid;
     }
 
     /// <summary>
@@ -161,14 +156,14 @@ public class PieceBase : MonoBehaviour
     /// </summary>
     public Transform[,] GetRotatedGridMinus90()
     {
-        Transform[,] rotatedGrid = new Transform[pieceGrid.GetLength(1), pieceGrid.GetLength(0)];
-        for (int i = 0; i < pieceGrid.GetLength(0); i++)
+        Transform[,] rotatedGrid = new Transform[_pieceGrid.GetLength(1), _pieceGrid.GetLength(0)];
+        for (int i = 0; i < _pieceGrid.GetLength(0); i++)
         {
-            for (int j = 0; j < pieceGrid.GetLength(1); j++)
+            for (int j = 0; j < _pieceGrid.GetLength(1); j++)
             {
                 int x = j;
                 int y = (rotatedGrid.GetLength(1) - 1) - i;
-                rotatedGrid[x, y] = pieceGrid[i, j];
+                rotatedGrid[x, y] = _pieceGrid[i, j];
             }
         }
 
@@ -180,13 +175,29 @@ public class PieceBase : MonoBehaviour
     /// </summary>
     public Transform[,] GetRotatedGrid90()
     {
-        Transform[,] rotatedGrid = new Transform[pieceGrid.GetLength(1), pieceGrid.GetLength(0)];
+        Transform[,] rotatedGrid = new Transform[_pieceGrid.GetLength(1), _pieceGrid.GetLength(0)];
         for (int i = 0; i < pieceGrid.GetLength(0); i++)
         {
             for (int j = 0; j < pieceGrid.GetLength(1); j++)
             {
                 int x = (rotatedGrid.GetLength(0) - 1) - j;
                 int y = i;
+                rotatedGrid[x, y] = _pieceGrid[i, j];
+            }
+        }
+
+        return rotatedGrid;
+    }
+
+    public Transform[,] GetRotatedGrid180()
+    {
+        Transform[,] rotatedGrid = new Transform[_pieceGrid.GetLength(0), _pieceGrid.GetLength(1)];
+        for(int i = 0; i < rotatedGrid.GetLength(0); i++)
+        {
+            for(int j = 0; j < rotatedGrid.GetLength(1); j++)
+            {
+                int x = (_pieceGrid.GetLength(0) - 1) - i;
+                int y = (_pieceGrid.GetLength(1) - 1) - j;
                 rotatedGrid[x, y] = _pieceGrid[i, j];
             }
         }

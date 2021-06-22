@@ -46,6 +46,11 @@ public class Timer
 
     public void PauseTimer()
     {
-        _isTimerRunning = !_isTimerRunning; //change the state of the timer started to the opposite
+        _isTimerRunning = false; //change the state of the timer started to the opposite
+    }
+
+    public void ResumeTimer()
+    {
+        _isTimerRunning = true;
     }
 }

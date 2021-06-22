@@ -14,8 +14,6 @@ public class TouchAndGyroInputSystem : InputSystem
         if (!Input.gyro.enabled)
             Input.gyro.enabled = true;
 
-        Debug.Log(Screen.orientation);
-
         float inputX = Input.acceleration.x;
         if (inputX < -_horizontalSens)
             inputX = -1;
@@ -29,7 +27,8 @@ public class TouchAndGyroInputSystem : InputSystem
 
     public override float GetRotation()
     {
-        return Input.acceleration.z;
+        float rotation = -Input.gyro.rotationRateUnbiased.z;
+        return rotation;
     }
 
     public override float GetVertical()

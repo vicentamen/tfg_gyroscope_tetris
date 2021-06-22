@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: default_playfield_grid
   m_EditorClassIdentifier: 
   _worldSizeX: 14
-  _worldSizeY: 27
+  _worldSizeY: 18
   _columns: 14
-  _rows: 27
+  _rows: 18
   _cellSize: 1

@@ -10,9 +10,6 @@ public struct MoveAttempt
     public Vector3 position { get => _position; }
     private Vector3 _position;
 
-    public ROTATION_DIRECTION rotation { get => _rotation; }
-    private ROTATION_DIRECTION _rotation;
-
     public PieceBase piece { get => _piece; }
     private PieceBase _piece;
 
@@ -25,8 +22,6 @@ public struct MoveAttempt
         _piece = piece;
 
         _position = piece.transform.position;
-        _rotation = ROTATION_DIRECTION.NONE;
-
         _state = MOVE_STATE.SUCCESS;
 
         AttemptMove();
@@ -165,10 +160,5 @@ public struct MoveAttempt
 public enum MOVE_STATE
 {
     SUCCESS, FAILURE
-}
-
-public enum ROTATION_DIRECTION
-{
-    NONE, LEFT, RIGHT
 }
 
