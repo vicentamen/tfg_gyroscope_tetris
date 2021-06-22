@@ -10,8 +10,8 @@ public struct MoveAttempt
     public Vector3 position { get => _position; }
     private Vector3 _position;
 
-    public ROTATION_TYPE rotation { get => _rotation; }
-    private ROTATION_TYPE _rotation;
+    public ROTATION_DIRECTION rotation { get => _rotation; }
+    private ROTATION_DIRECTION _rotation;
 
     public PieceBase piece { get => _piece; }
     private PieceBase _piece;
@@ -25,13 +25,16 @@ public struct MoveAttempt
         _piece = piece;
 
         _position = piece.transform.position;
-        _rotation = ROTATION_TYPE.NONE;
+        _rotation = ROTATION_DIRECTION.NONE;
 
         _state = MOVE_STATE.SUCCESS;
 
         AttemptMove();
     }
 
+    /// <summary>
+    /// Attempts a move for the piece in the direction delivered to the object
+    /// </summary>
     private void AttemptMove()
     {
         if (Mathf.Abs(_moveDir.x) > 0)
@@ -41,6 +44,9 @@ public struct MoveAttempt
             AttemptFall();
     }
 
+    /// <summary>
+    /// Try to move the piece either left or right
+    /// </summary>
     private void AttemptMoveHorizontal()
     {
         //Calculate new piece position
@@ -53,45 +59,35 @@ public struct MoveAttempt
             AttemptMoveRight(x);
     }
 
+    /// <summary>
+    /// Tries to move the piece to the left, and rotates it in case there is a collision
+    /// </summary>
+    /// <param name="x"></param>
     private void AttemptMoveLeft(float x)
     {
-        int collisionsCounter = 0;
         for (int j = 0; j < _piece.pieceGrid.GetLength(1); j++) //From bot to top
         {
             for (int i = 0; i < _piece.pieceGrid.GetLength(0); i++) //From right to left
             {
                 if (_piece.pieceGrid[i, j] != null)
                 {
-                    float blockX = x + (i - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
-                    float blockY = _position.y + (j - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
+                    float blockX = x + CalculateBlockWorldPosition(i, _piece.pieceGrid.GetLength(0));
+                    float blockY = _position.y + CalculateBlockWorldPosition(j, _piece.pieceGrid.GetLength(1));
                     Vector2 newPos = new Vector2(blockX, blockY);
                     //Chekc if block will be out of bounds
-                    if (Playfield.IsPieceOutOfBounds(newPos))
+                    if (Playfield.IsBlockOutOfBounds(newPos))
                     {
                         _state = MOVE_STATE.SUCCESS;
                         return;
                     }
                     if (!Playfield.IsNodeEmpty(Playfield.FromWorldToGridPosition(new Vector2(blockX, blockY))))
                     {
-                        collisionsCounter++; //Increase the collision counter
-                        /*if (collisionsCounter >= (_piece.pieceGrid.GetLength(1) / 2f)) //If the collision surface is bigger than the piece height then it cannot rotate
-                        { 
-                            _moveState = MOVE_STATE.SUCCESS; //The piece can at least keep fallings
-                            return; //The position stays the same
-                        }
-
-                        return;*/
+                        _state = MOVE_STATE.SUCCESS;
+                        return; //The piece stays in the same position/
                     }
 
                 }
             }
-        }
-
-        //Analyze collisions
-        if(collisionsCounter > 0)
-        {
-            _state = MOVE_STATE.SUCCESS;
-            return; //The piece stays in the same position
         }
 
         _position.x = x;
@@ -99,40 +95,28 @@ public struct MoveAttempt
 
     private void AttemptMoveRight(float x)
     {
-        int collisionsCounter = 0;
         for (int j = 0; j < _piece.pieceGrid.GetLength(1); j++) //From bot to top
         {
             for (int i = _piece.pieceGrid.GetLength(0) - 1; i >= 0; i--) //From right to left
             {
                 if (_piece.pieceGrid[i, j] != null)
                 {
-                    float blockX = x + (i - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
-                    float blockY = _position.y + (j - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
+                    float blockX = x + CalculateBlockWorldPosition(i, _piece.pieceGrid.GetLength(0));
+                    float blockY = _position.y + CalculateBlockWorldPosition(j, _piece.pieceGrid.GetLength(1));
                     Vector2 newPos = new Vector2(blockX, blockY);
                     //Chekc if block will be out of bounds
-                    if (Playfield.IsPieceOutOfBounds(newPos))
+                    if (Playfield.IsBlockOutOfBounds(newPos))
                     {
                         _state = MOVE_STATE.SUCCESS;
                         return;
                     }
                     if (!Playfield.IsNodeEmpty(Playfield.FromWorldToGridPosition(new Vector2(blockX, blockY))))
                     {
-                        collisionsCounter++; //Increase the collision counter
-                        /*if (collisionsCounter >= (_piece.pieceGrid.GetLength(1) / 2f)) //If the collision surface is bigger than the piece height then it cannot rotate
-                        {
-                            _moveState = MOVE_STATE.SUCCESS; //The piece can still keep falling
-                            return; //The position stays the same
-                        }*/
+                        _state = MOVE_STATE.SUCCESS;
+                        return; //The piece stays in the same position
                     }
                 }
             }
-        }
-
-        //Analyze collisions
-        if (collisionsCounter > 0)
-        {
-            _state = MOVE_STATE.SUCCESS;
-            return; //The piece stays in the same position
         }
 
         _position.x = x;
@@ -143,49 +127,38 @@ public struct MoveAttempt
         //Calculate new vertical position for the piece
         float y = _piece.transform.position.y + (Mathf.Clamp(moveDir.y, -1, 0) * Playfield.gridData.cellSize);
 
-        //Check collisions on the playfield
-        int collisionsCounter = 0;
         for (int j = 0; j < _piece.pieceGrid.GetLength(1); j++) //From bot to top
         {
             for (int i = _piece.pieceGrid.GetLength(0) - 1; i >= 0; i--) //From right to left
             {
                 if (_piece.pieceGrid[i, j] != null)
                 {
-                    float blockX = _position.x + (i - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
-                    float blockY = y + (j - ((_piece.pieceGrid.GetLength(0) / 2f) - (Playfield.gridData.cellSize / 2f)));
-                    Vector2 newPos = new Vector2(blockX, blockY);
+                    float blockX = _position.x + CalculateBlockWorldPosition(i, _piece.pieceGrid.GetLength(0));
+                    float blockY = y + CalculateBlockWorldPosition(j, _piece.pieceGrid.GetLength(1));
+                    Vector2 blockPos = new Vector2(blockX, blockY);
                     //Chekc if block will be out of bounds
-                    if(Playfield.IsPieceOutOfBounds(newPos))
+                    if(Playfield.IsBlockOutOfBounds(blockPos))
                     {
                         _state = MOVE_STATE.FAILURE;
                         return;
                     }
 
-                    if (!Playfield.IsNodeEmpty(Playfield.FromWorldToGridPosition(newPos)))//There has been a collision
+                    if (!Playfield.IsNodeEmpty(Playfield.FromWorldToGridPosition(blockPos)))//A collision has happend
                     {
-                        collisionsCounter++;
-                        /*if (collisionsCounter >= _piece.pieceGrid.GetLength(0)) //If the collisions is bigger than half of the width then it cannot rotate or keep falling
-                        {
-                            _moveState = MOVE_STATE.FAILURE; //Cannot move anymore and so it has to be placed
-                            return; //There is no need to keep checking for more
-                        }
-
-                        _moveState = MOVE_STATE.FAILURE;
-                        return;*/
+                        _position = _piece.transform.position;
+                        _state = MOVE_STATE.FAILURE;
+                        return;
                     }
                 }
             }
         }
 
-
-        //Analyze collisions
-        if (collisionsCounter > 0)
-        {
-            _state = MOVE_STATE.FAILURE;
-            return; //The piece stays in the same position
-        }
-
         _position.y = y;
+    }
+
+    private float CalculateBlockWorldPosition(int blockIndex, float arrayLength)
+    {
+        return blockIndex - ((arrayLength / 2f) - (Playfield.gridData.cellSize / 2f));
     }
 }
 
@@ -194,7 +167,8 @@ public enum MOVE_STATE
     SUCCESS, FAILURE
 }
 
-public enum ROTATION_TYPE
+public enum ROTATION_DIRECTION
 {
     NONE, LEFT, RIGHT
 }
+

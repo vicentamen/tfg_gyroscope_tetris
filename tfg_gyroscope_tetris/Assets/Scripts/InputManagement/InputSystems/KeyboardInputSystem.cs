@@ -10,6 +10,14 @@ public class KeyboardInputSystem : InputSystem
         return Input.GetAxisRaw("Horizontal");
     }
 
+    public override float GetRotation()
+    {
+        if (Input.GetKeyDown(KeyCode.E)) return 1;
+        else if (Input.GetKeyDown(KeyCode.Q)) return -1;
+
+        return 0;
+    }
+
     public override float GetVertical()
     {
         return Input.GetAxisRaw("Vertical");

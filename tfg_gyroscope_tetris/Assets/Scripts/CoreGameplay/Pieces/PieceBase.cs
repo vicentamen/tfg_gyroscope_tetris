@@ -12,10 +12,12 @@ public class PieceBase : MonoBehaviour
     [Header("GAMEPLAY PROPERTIES")]
     [SerializeField, Tooltip("Wheter or not the blocks are offsetted from the piece pivot")] 
     private bool _isPivotOffsetted = false;
+    [SerializeField] private bool _canRotate = true;
     /// <summary>
     /// Whether or not the blocks are offsetted from the piece pivot
     /// </summary>
     public bool isPivotOffsetted { get => _isPivotOffsetted; }
+    public bool canRotate { get => _canRotate; }
 
 
     [SerializeField] private Transform[] _pieceBlocks;
@@ -31,6 +33,9 @@ public class PieceBase : MonoBehaviour
         UpdatePieceSize(playfield.cellSize);
     }
 
+    /// <summary>
+    /// Dynamically creates the matrix grid that will contain all the blocks positions in the game logic
+    /// </summary>
     private void BuildPieceGrid()
     {
         //Create the grid
@@ -100,27 +105,38 @@ public class PieceBase : MonoBehaviour
     #endregion
 
     #region MOVEMENT_&_ROTATION_MANAGEMENT
+    /// <summary>
+    /// Moves the piece to the new position
+    /// </summary>
+    /// <param name="newPos"></param>
     public void Move(Vector3 newPos)
     {
         transform.position = newPos;
     }
 
-    public void Rotate(ROTATION_TYPE rotation)
+    /// <summary>
+    /// Rotates the piece depending on the rotation direction applied
+    /// </summary>
+    /// <param name="rotation"></param>
+    public void Rotate(ROTATION_DIRECTION rotation)
     {
         switch (rotation)
         {
-            case ROTATION_TYPE.RIGHT:
+            case ROTATION_DIRECTION.RIGHT:
                 RotateRight();
                 break;
-            case ROTATION_TYPE.LEFT: 
+            case ROTATION_DIRECTION.LEFT: 
                 RotateLeft();
                 break;
-            case ROTATION_TYPE.NONE:
+            case ROTATION_DIRECTION.NONE:
             default:
                 break;
         }
     }
 
+    /// <summary>
+    /// Rotates the piece and grid 90 degrees
+    /// </summary>
     public void RotateRight()
     {
         transform.rotation *= Quaternion.Euler(new Vector3(0, 0, 90));
@@ -128,14 +144,22 @@ public class PieceBase : MonoBehaviour
         _rotatedGrid = GetRotatedGrid90();
     }
 
+    /// <summary>
+    /// Rotates the piece and grid -90 degrees
+    /// </summary>
     public void RotateLeft()
     {
         transform.rotation *= Quaternion.Euler(new Vector3(0, 0, -90));
 
         _rotatedGrid = GetRotatedGridMinus90();
     }
+    #endregion
 
-    private Transform[,] GetRotatedGridMinus90()
+    #region GET_PIECE_DATA
+    /// <summary>
+    /// Returns the current grid of the piece rotated -90 degrees
+    /// </summary>
+    public Transform[,] GetRotatedGridMinus90()
     {
         Transform[,] rotatedGrid = new Transform[pieceGrid.GetLength(1), pieceGrid.GetLength(0)];
         for (int i = 0; i < pieceGrid.GetLength(0); i++)
@@ -151,7 +175,10 @@ public class PieceBase : MonoBehaviour
         return rotatedGrid;
     }
 
-    private Transform[,] GetRotatedGrid90()
+    /// <summary>
+    /// Returns the current grid of the piece rotated 90 degrees
+    /// </summary>
+    public Transform[,] GetRotatedGrid90()
     {
         Transform[,] rotatedGrid = new Transform[pieceGrid.GetLength(1), pieceGrid.GetLength(0)];
         for (int i = 0; i < pieceGrid.GetLength(0); i++)
@@ -166,7 +193,60 @@ public class PieceBase : MonoBehaviour
 
         return rotatedGrid;
     }
+
+    /// <summary>
+    /// Returns the distance from the furthest left and bottom to the pivot
+    /// </summary>
+    /// <returns></returns>
+    public Vector2 GetMinRelative(Transform[,] gridReference)
+    {
+        float x = Mathf.Infinity;
+        float y = Mathf.Infinity;
+        for(int i = 0; i < gridReference.GetLength(0); i++)
+        {
+            for(int j = 0; j < gridReference.GetLength(1); j++)
+            {
+                if(gridReference[i,j] != null)
+                {
+                    if (gridReference[i,j].position.x < x)
+                        x = gridReference[i, j].position.x;
+
+                    if (gridReference[i, j].position.y < y)
+                        y = gridReference[i, j].position.y;
+                }
+            }
+        }
+
+        return new Vector2(transform.position.x - x, transform.position.y - y);
+    }
+
+    /// <summary>
+    /// Returns the distance from the furthest right and top to the pivot
+    /// </summary>
+    /// <returns></returns>
+    public Vector2 GetMaxRelative(Transform[,] gridReference)
+    {
+        float x = -Mathf.Infinity;
+        float y = -Mathf.Infinity;
+        for (int i = 0; i < gridReference.GetLength(0); i++)
+        {
+            for (int j = 0; j < gridReference.GetLength(1); j++)
+            {
+                if (gridReference[i, j] != null)
+                {
+                    if (gridReference[i, j].position.x > x)
+                        x = gridReference[i, j].position.x;
+
+                    if (gridReference[i, j].position.y > y)
+                        y = gridReference[i, j].position.y;
+                }
+            }
+        }
+
+        return new Vector2(x - transform.position.x, y - transform.position.y);
+    }
     #endregion
+
 
     private void OnDrawGizmos()
     {

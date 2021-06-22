@@ -132,6 +132,7 @@ MonoBehaviour:
   blockSprite: {fileID: 21300000, guid: ee9546926e7584e4c93232c9342b62a2, type: 3}
   menuPreviewSprite: {fileID: 21300000, guid: 959553d87039dc54c9643a34e132c31d, type: 3}
   _isPivotOffsetted: 1
+  _canRotate: 0
   _pieceBlocks:
   - {fileID: 4264958095714190229}
   - {fileID: 4264958096342111277}

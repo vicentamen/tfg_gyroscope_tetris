@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
+using UnityEngine.Events;
 
 public class PlayfieldManager : MonoBehaviour
 {
@@ -28,6 +30,7 @@ public class PlayfieldManager : MonoBehaviour
         Playfield.SetupGameboard(this);
     }
 
+
     public Vector3 GetPieceSpawnWorldPosition(bool isPivotOffsetted)
     {
         //The result should change depending on wheter the pivot is offsetted or not
@@ -35,20 +38,91 @@ public class PlayfieldManager : MonoBehaviour
         return FromGridToWorldPosition(_pieceSpawnGridPosition) - Vector3.one * offset;
     }
 
-    public void PlacePiece(PieceBase piece)
+    public PiecePlaceResult PlacePiece(PieceBase piece)
     {
+        PiecePlaceResult result = new PiecePlaceResult();
         //get the piece blocks position and add them to the board, will have to use BLOCK objects or not, maybe I can simply have SpriteReder-s and animate them later with DoTween
         foreach(Transform pieceBlock in piece.pieceBlocks)
         {
             Block newBlock = _blocksPool.GetItem().GetComponent<Block>();
+            newBlock.gameObject.SetActive(true);
+
             newBlock.PlaceBlock(pieceBlock.position, Vector3.one * _gridData.cellSize, piece);
 
             //Save the block in the board
             Vector2Int index = FromWorldToGridPosition(pieceBlock.position);
             _board[index.x, index.y] = newBlock;
+
+            result.AddOccuppiedLine(index.y);
+        }
+
+        for(int i = 0; i < result.occupiedLines.Count; i++)
+            if (CheckCompletedLine(result.occupiedLines[i]))
+                result.AddCompletedLine(result.occupiedLines[i]);
+
+        return result;
+    }
+
+    public bool CheckCompletedLine(int line)
+    {
+        bool lineFull = true;
+        for (int i = 0; i < _board.GetLength(0); i++)
+        {
+            if(_board[i, line] == null)
+            {
+                lineFull = false;
+                break;
+            }
+        }
+
+        return lineFull;
+    }
+
+    public void ClearLines(List<int> lines)
+    {
+        Sequence clearSeq = DOTween.Sequence();
+        for (int i = 0; i < lines.Count; i++)
+            clearSeq.Join(ClearLine(lines[i]));
+
+        clearSeq.AppendCallback(() => MakeBlocksFall(lines));
+    }
+
+    public Sequence ClearLine(int line)
+    {
+        Sequence clearSeq = DOTween.Sequence();
+        for (int i = 0; i < _board.GetLength(0); i++)
+        {
+            clearSeq.Join(_board[i, line].DestroyAnimation(_board[i, line].DestroyBlock));
+            _board[i, line] = null;
+        }
+
+        return clearSeq;
+    }
+
+    private void MakeBlocksFall(List<int> lines)
+    {
+        lines.Sort();
+        for(int i = 0; i < lines.Count; i++)
+        {
+            MakeBlocksFall(lines[i], i);
         }
     }
 
+    private void MakeBlocksFall(int startLine, int index)
+    {
+        for(int i = 0; i < _board.GetLength(0); i++)
+        {
+            for(int j = (startLine - index) + 1; j < _board.GetLength(1); j++)
+            {
+                if(_board[i, j] != null)
+                {
+                    _board[i, j].transform.position = Playfield.FromGridToWorldPosition(i, j - 1);
+                    _board[i, j - 1] = _board[i, j];
+                    _board[i, j] = null; //delete reference to the previous block
+                }
+            }
+        }
+    }
 
     #region POSITION_CONVERTIONS
     public Vector2Int FromWorldToGridPosition(Vector2 worldPos) //Math taken from pathfinfing video of Sbastian Lague https://www.youtube.com/watch?v=nhiFx28e7JY&list=PLFt_AvWsXl0cq5Umv3pMC9SPnKjfp9eGW&index=2
@@ -71,24 +145,41 @@ public class PlayfieldManager : MonoBehaviour
 
     public Vector3 FromGridToWorldPosition(Vector2Int gridPosition) //Might not need this function
     {
-        float x = this.transform.position.x - (_gridData.worldSizeX / 2f) + (gridPosition.x * _gridData.cellSize) + (_gridData.cellSize / 2f);
-        float y = this.transform.position.y - (_gridData.worldSizeY / 2f) + (gridPosition.y * _gridData.cellSize) + (_gridData.cellSize / 2f);
+        return FromGridToWorldPosition(gridPosition.x, gridPosition.y);
+    }
+
+    public Vector3 FromGridToWorldPosition(int i, int j)
+    {
+        float x = this.transform.position.x - (_gridData.worldSizeX / 2f) + (i * _gridData.cellSize) + (_gridData.cellSize / 2f);
+        float y = this.transform.position.y - (_gridData.worldSizeY / 2f) + (j * _gridData.cellSize) + (_gridData.cellSize / 2f);
 
         return new Vector3(x, y, this.transform.position.z);
+
     }
 
     public bool IsBlockOutOfBounds(Vector3 pos)
     {
-        if (pos.x <= (transform.position.x - (_gridData.worldSizeX / 2f)))
-            return true;
-        else if (pos.x > (transform.position.x + (_gridData.worldSizeX / 2f)))
-            return true;
-        else if (pos.y <= (transform.position.y - (_gridData.worldSizeY / 2f)))
-            return true;
-        else if (pos.y > (transform.position.y + (_gridData.worldSizeY / 2f)))
-            return true;
+        return IsBlockOutBottom(pos.y) || IsBlockOutTop(pos.y) || IsBlockOutRight(pos.x) || IsBlockOutLeft(pos.x);
+    }
 
-        return false;
+    public bool IsBlockOutLeft(float posX)
+    {
+        return posX <= (transform.position.x - (_gridData.worldSizeX / 2f));
+    }
+
+    public bool IsBlockOutRight(float posX)
+    {
+        return posX > (transform.position.x + (_gridData.worldSizeX / 2f));
+    }
+
+    public bool IsBlockOutBottom(float posY)
+    {
+        return posY <= (transform.position.y - (_gridData.worldSizeY / 2f));
+    }
+
+    public bool IsBlockOutTop(float posY)
+    {
+        return posY > (transform.position.y + (_gridData.worldSizeY / 2f));
     }
     #endregion
 
@@ -118,6 +209,37 @@ public class PlayfieldManager : MonoBehaviour
     }
 }
 
+public class PiecePlaceResult
+{
+    public List<int> occupiedLines { get => _occuppiedLines; }
+    private List<int> _occuppiedLines;
+
+    public List<int> completedLines { get => _completedLines; }
+    private List<int> _completedLines;
+
+    public int completedCount { get => _occuppiedLines.Count; }
+
+    public PiecePlaceResult()
+    {
+        _occuppiedLines = new List<int>();
+        _completedLines = new List<int>();
+    }
+
+    public void AddOccuppiedLine(int line)
+    {
+        if (!_occuppiedLines.Contains(line)) //If the line is not yet on the list 
+            _occuppiedLines.Add(line);
+            
+    }
+
+    public void AddCompletedLine(int line)
+    {
+        if (!_completedLines.Contains(line)) //if the line is not already on the list
+            _completedLines.Add(line);
+    }
+}
+public class PlaceEvent : UnityEvent<PiecePlaceResult> { }
+
 public class Playfield
 {
     private static PlayfieldManager _playfield;
@@ -138,14 +260,39 @@ public class Playfield
         return _playfield.FromGridToWorldPosition(gridPosition);
     }
 
+    public static Vector3 FromGridToWorldPosition(int i, int j)
+    {
+        return _playfield.FromGridToWorldPosition(i, j);
+    }
+
     public static Vector3 GetPieceSpawnWorldPosition(bool isPivotOffsetted)
     {
         return _playfield.GetPieceSpawnWorldPosition(isPivotOffsetted);
     }
 
-    public static bool IsPieceOutOfBounds(Vector2 pos)
+    public static bool IsBlockOutOfBounds(Vector2 pos)
     {
         return _playfield.IsBlockOutOfBounds(pos);
+    }
+
+    public static bool IsBlockOutRight(float posX)
+    {
+        return _playfield.IsBlockOutRight(posX);
+    }
+
+    public static bool IsBlockOutLeft(float posX)
+    {
+        return _playfield.IsBlockOutLeft(posX);
+    }
+
+    public static bool IsBlockOutTop(float posY)
+    {
+        return _playfield.IsBlockOutTop(posY);
+    }
+
+    public static bool IsClockOutBottom(float posY)
+    {
+        return _playfield.IsBlockOutBottom(posY);
     }
 
     public static bool IsNodeEmpty(Vector2Int index)

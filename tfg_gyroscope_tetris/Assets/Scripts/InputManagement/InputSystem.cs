@@ -14,4 +14,10 @@ public abstract class InputSystem : ScriptableObject
     /// </summary>
     /// <returns>A float value that goes form -1 to 1</returns>
     public abstract float GetVertical();
+
+    /// <summary>
+    /// Filtered rotation direction
+    /// </summary>
+    /// <returns>float value that goes from -1 to 1</returns>
+    public abstract float GetRotation();
 }

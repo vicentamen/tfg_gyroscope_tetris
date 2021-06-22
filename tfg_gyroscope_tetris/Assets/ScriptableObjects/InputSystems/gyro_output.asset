@@ -9,11 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0da0b6a439ba074468b853e794642970, type: 3}
-  m_Name: default_playfield_grid
+  m_Script: {fileID: 11500000, guid: 730d6fe1f4c8e4349b526348329de4d7, type: 3}
+  m_Name: gyro_output
   m_EditorClassIdentifier: 
-  _worldSizeX: 14
-  _worldSizeY: 27
-  _columns: 14
-  _rows: 27
-  _cellSize: 1
+  sensibility: 0.1

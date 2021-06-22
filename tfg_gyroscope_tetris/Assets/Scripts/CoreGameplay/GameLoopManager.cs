@@ -69,10 +69,15 @@ public class GameLoopManager : MonoBehaviour
     private void OnPiecePlaced(PieceBase placedPiece)
     {
         //Place piece
-        _playfield.PlacePiece(placedPiece);
+        PiecePlaceResult placeResult = _playfield.PlacePiece(placedPiece);
         //Check game condition
         //Is game over, is there any line filled?
         //Give new active piece and enable player controller
+        if(placeResult.completedCount > 0)
+        {
+            _playfield.ClearLines(placeResult.completedLines);
+        }
+
         _playerController.SetNewActivePiece(_pieceManager.GetNextPiece());
         _playerController.Enable();
     }
