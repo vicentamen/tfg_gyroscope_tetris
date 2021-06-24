@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 /// <summary>
@@ -16,6 +17,11 @@ public class PieceManager : MonoBehaviour
     private List<PieceBase> _instancedPieces;
     [SerializeField] private Transform _piecesContainer;
 
+    //UI pieces management
+    [SerializeField] private Image _nextPieceImage;
+    [SerializeField] private Image _secondNextPieceImage;
+    [SerializeField] private Image _thirdNextPieceImage;
+
     private PieceBase _savedPiece; //Piece that the player has saved to use later
 
     public void Initialize(PieceSet gamePieces, PlayfieldGrid gridData)
@@ -26,6 +32,8 @@ public class PieceManager : MonoBehaviour
         //Build the main and back up pieces queue
         BuildPiecesQueue(out _piecesQueue);
         BuildPiecesQueue(out _backupPiecesQueue);
+
+        InitPiecesUI();
     }
 
     private void InitPieces(PlayfieldGrid gridData)
@@ -41,6 +49,11 @@ public class PieceManager : MonoBehaviour
 
             _instancedPieces.Add(piece); //Add piece to the list
         }
+    }
+
+    private void InitPiecesUI()
+    {
+        UpdateNextPiecesIU();
     }
 
     /// <summary>
@@ -60,6 +73,8 @@ public class PieceManager : MonoBehaviour
 
         if (_backupPiecesQueue.Count <= 0) //If we have emptied the backup queue, fill it again
             BuildPiecesQueue(out _backupPiecesQueue);
+
+        UpdateNextPiecesIU();
 
         return nextPiece;
     }
@@ -91,5 +106,13 @@ public class PieceManager : MonoBehaviour
             list[k] = list[n];
             list[n] = aux;
         }
+    }
+
+    public void UpdateNextPiecesIU()
+    {
+        PieceBase[] nextPieces = _piecesQueue.ToArray();
+        _nextPieceImage.sprite = nextPieces[0].menuPreviewSprite;
+        _secondNextPieceImage.sprite = nextPieces[1].menuPreviewSprite;
+        _thirdNextPieceImage.sprite = nextPieces[2].menuPreviewSprite;
     }
 }

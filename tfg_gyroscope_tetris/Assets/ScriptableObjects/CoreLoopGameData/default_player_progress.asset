@@ -9,9 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5384bc5d41ac2c847b7c67ef6f0b683c, type: 3}
-  m_Name: test_game_data
+  m_Script: {fileID: 11500000, guid: e5bcdcea6b670e142a41bab0afb98b6b, type: 3}
+  m_Name: default_player_progress
   m_EditorClassIdentifier: 
-  _timeBetweenInputs: 0.1
-  _timeBetweenFall: 0.7
-  _pieces: {fileID: 11400000, guid: 197161dc4038c4f4cb83bfc53e7bc011, type: 2}
+  _scorePerPiece: 25
+  _scorePerLine: 100
+  _comboMultipliers:
+  - 1
+  - 1.5
+  - 2
+  - 4

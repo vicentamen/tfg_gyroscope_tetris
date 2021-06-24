@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5384bc5d41ac2c847b7c67ef6f0b683c, type: 3}
   m_Name: default_game_data
   m_EditorClassIdentifier: 
-  _timeBetweenInputs: 0.3
-  _timeBetweenFall: 1
+  _timeBetweenInputs: 0.1
+  _timeBetweenFall: 0.7
   _pieces: {fileID: 11400000, guid: 197161dc4038c4f4cb83bfc53e7bc011, type: 2}

@@ -109,29 +109,44 @@ public class PlayerController : MonoBehaviour
     public void SetNewActivePiece(PieceBase newPiece)
     {
         newPiece.transform.position = Playfield.GetPieceSpawnWorldPosition(newPiece.isPivotOffsetted);
-        newPiece.Enable();
+        newPiece.Enable(Rotator.GetRotationFromOrientation(_orientation));
 
         _activePiece = newPiece;
     }
 
     public void RotateActivePiece(SCREEN_ORIENTATION orientation)
     {
-        if(orientation == SCREEN_ORIENTATION.NONE) //The player is rotating so it has to pause input and fall loops
+        if(orientation != _orientation)
         {
+            //Pause timers during rotation
             _inputReadTimer.PauseTimer();
             _pieceFallTimer.PauseTimer();
-        }
-        else
-        {
-            float rotation = Rotator.GetRotationFromOrientation(orientation);
-            _activePiece.Rotate(rotation);
-            screen.transform.DORotate(new Vector3(0, 0, Rotator.GetRotationFromOrientation(orientation)), 0.5f);
 
-            //Should check if the rotation is acceptable
+            //Check if the rotation is available
+            RotationAttempt rotAttempt = new RotationAttempt(orientation, _activePiece);
+            if(rotAttempt.state == PIECE_ROTATION_STATE.SUCCESS) //if the piece can freely rotate, then rotate
+            {
+                float rotation = Rotator.GetRotationFromOrientation(orientation);
+
+                _activePiece.Move(rotAttempt.position);
+                _activePiece.Rotate(rotation);
+            }
+            else //if the piece cannot rotate
+            {
+                //Give the piece the new starting rotation
+            }
+            
+            screen.transform.DORotate(new Vector3(0, 0, Rotator.GetRotationFromOrientation(orientation)), 0.5f); //only for testing
+
 
             _orientation = orientation;
-            _inputReadTimer.ResumeTimer();
-            _pieceFallTimer.ResumeTimer();
+
+            //delay turning on the timers a little bit
+            DOVirtual.DelayedCall(1f, () =>
+            {
+                _inputReadTimer.ResumeTimer();
+                _pieceFallTimer.ResumeTimer();
+            });
         }
     }
     #endregion

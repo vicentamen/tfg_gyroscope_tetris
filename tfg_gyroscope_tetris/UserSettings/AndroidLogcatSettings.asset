@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "1d96590a0704",
         "name": "com.DefaultCompany.com.unity.template.mobile2D",
-        "processId": 4058,
+        "processId": 25544,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -11,67 +11,43 @@
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 15519,
+            "processId": 32278,
             "exited": true
         },
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 16718,
+            "processId": 1271,
+            "exited": true
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.unity3d.genericremote",
+            "processId": 1470,
             "exited": true
         },
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 17298,
+            "processId": 1929,
             "exited": true
         },
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 17815,
+            "processId": 15074,
             "exited": true
         },
         {
             "deviceId": "1d96590a0704",
-            "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 18114,
-            "exited": true
-        },
-        {
-            "deviceId": "1d96590a0704",
-            "name": "com.microsoft.launcher",
-            "processId": 3228,
+            "name": "com.unity3d.genericremote",
+            "processId": 8598,
             "exited": false
         },
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 18625,
-            "exited": false
-        },
-        {
-            "deviceId": "1d96590a0704",
-            "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 24297,
-            "exited": false
-        },
-        {
-            "deviceId": "1d96590a0704",
-            "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 26344,
-            "exited": false
-        },
-        {
-            "deviceId": "1d96590a0704",
-            "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 24976,
-            "exited": false
-        },
-        {
-            "deviceId": "1d96590a0704",
-            "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 4058,
+            "processId": 25544,
             "exited": false
         }
     ],

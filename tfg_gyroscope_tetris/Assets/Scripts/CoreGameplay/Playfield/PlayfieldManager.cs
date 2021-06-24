@@ -22,12 +22,17 @@ public class PlayfieldManager : MonoBehaviour
     //Piece placement management
     private Vector2Int _pieceSpawnGridPosition;
 
+    public float highestLine { get => _highestLine; }
+    private int _highestLine; 
+
     public void Initialize()
     {
         _board = new Block[_gridData.columns, _gridData.rows];
         _pieceSpawnGridPosition = new Vector2Int(Mathf.RoundToInt(_gridData.columns / 2), (_gridData.rows < 26) ? (_gridData.rows - 2) : 24);
 
         Playfield.SetupGameboard(this);
+
+        _highestLine = 0;
     }
 
 
@@ -52,6 +57,10 @@ public class PlayfieldManager : MonoBehaviour
             //Save the block in the board
             Vector2Int index = FromWorldToGridPosition(pieceBlock.position);
             _board[index.x, index.y] = newBlock;
+
+            //Set highest line
+            if (index.y > _highestLine)
+                _highestLine = index.y;
 
             result.AddOccuppiedLine(index.y);
         }
@@ -85,6 +94,8 @@ public class PlayfieldManager : MonoBehaviour
             clearSeq.Join(ClearLine(lines[i]));
 
         clearSeq.AppendCallback(() => MakeBlocksFall(lines));
+
+        _highestLine = Mathf.Clamp(_highestLine - lines.Count, 0, _gridData.rows);
     }
 
     public Sequence ClearLine(int line)
@@ -97,6 +108,23 @@ public class PlayfieldManager : MonoBehaviour
         }
 
         return clearSeq;
+    }
+
+    public void ClearAllLines(UnityAction onComplete)
+    {
+        Sequence clearSeq = DOTween.Sequence();
+        for(int i = 0; i < _board.GetLength(0); i++)
+        {
+            for(int j = 0; j < _board.GetLength(1); j++)
+            {
+                if(_board[i, j] != null)
+                {
+                    clearSeq.Join(_board[i, j].DestroyAnimation(_board[i, j].DestroyBlock).SetDelay(0.05f * j));
+                }
+            }
+        }
+
+        clearSeq.AppendCallback(() => onComplete?.Invoke());
     }
 
     private void MakeBlocksFall(List<int> lines)
@@ -217,7 +245,7 @@ public class PiecePlaceResult
     public List<int> completedLines { get => _completedLines; }
     private List<int> _completedLines;
 
-    public int completedCount { get => _occuppiedLines.Count; }
+    public int completedCount { get => _completedLines.Count; }
 
     public PiecePlaceResult()
     {
@@ -298,5 +326,15 @@ public class Playfield
     public static bool IsNodeEmpty(Vector2Int index)
     {
         return _playfield.IsNodeEmpty(index);
+    }
+
+    public static bool IsBoardLinesFull()
+    {
+        return _playfield.highestLine > _playfield.gridData.columns;
+    }
+
+    public static void ClearBoard(UnityAction onComplete)
+    {
+        _playfield.ClearAllLines(onComplete);
     }
 }

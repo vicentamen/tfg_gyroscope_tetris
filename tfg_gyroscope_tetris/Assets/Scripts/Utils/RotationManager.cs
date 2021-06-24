@@ -33,22 +33,24 @@ public class RotationManager : MonoBehaviour
     private void Update()
     {
         _rotation += _inputSystem.GetRotation() * _rotationSpeed * Time.deltaTime;
-        //_rotation = Input.gyro.attitude.eulerAngles.z;
+        //_rotation = Input.gyro.attitude.eulerAngles.z - 90f;
         //Keep rotation within 0 and 359
         if (_rotation >= 360f)
             _rotation -= 360f;
         else if (_rotation < 0f)
-            _rotation = 360 + _rotation; //The rotation will be negative here, that is why we are adding instead of substracting
+            _rotation += 360f; //The rotation will be negative here, that is why we are adding instead of substracting
 
-        SCREEN_ORIENTATION orientation = GetOrientationFromRotation(_rotation);
-        Rotate(orientation);
+        Debug.Log("rotation: " + _rotation + " orientation: " + GetOrientationFromRotation(_rotation));
+        if (CheckRotation(_rotation))
+        {
+            SCREEN_ORIENTATION orientation = GetOrientationFromRotation(_rotation);
+            Rotate(orientation);
+        }
     }
 
     private void Rotate(SCREEN_ORIENTATION newOrientation)
     {
-        if(newOrientation != SCREEN_ORIENTATION.NONE && newOrientation != _currentOrientation)
-            _currentOrientation = newOrientation;
-
+        _currentOrientation = newOrientation;
         onRotation?.Invoke(newOrientation);
     }
 
@@ -66,26 +68,46 @@ public class RotationManager : MonoBehaviour
 
     public SCREEN_ORIENTATION GetOrientationFromRotation(float rotation)
     {
-        if ((rotation <= 0f + _safeArea) ||
-            (rotation >=  360f - _safeArea))
-            return SCREEN_ORIENTATION.PORTRAIT;
-        else if ((rotation >= 90f - _safeArea) &&
-            (rotation <= 90f + _safeArea))
+        if ((rotation > 90f - 45f) &&
+            (rotation <= 90f + 45f))
             return SCREEN_ORIENTATION.INV_LANDSCAPE;
-        else if ((rotation >= 180f - _safeArea) &&
-            (rotation <= 180f + _safeArea))
+        else if ((rotation > 180f - 45f) &&
+            (rotation <= 180f + 45f))
             return SCREEN_ORIENTATION.INV_PORTRAIT;
-        else if ((rotation <= 270f + _safeArea) &&
-            (rotation >= 270f - _safeArea))
+        else if ((rotation > 270f - 45f) &&
+            (rotation <= 270f + 45f))
             return SCREEN_ORIENTATION.LANDSCAPE;
+        else if ((rotation <= 0f + 45f) ||
+            (rotation > 360 - 45f))
+            return SCREEN_ORIENTATION.PORTRAIT;
 
         return SCREEN_ORIENTATION.NONE;
     }
 
-    private void OnGUI()
+    private bool CheckRotation(float rotation)
     {
-        GUI.color = Color.red;
-        GUI.TextArea(new Rect(0f, 0f, 200f, 200f), _rotation.ToString());
+        if(_currentOrientation == SCREEN_ORIENTATION.LANDSCAPE)
+        {
+            if (_rotation < 270f - _safeArea || _rotation > 270f + _safeArea)
+                return true;
+        }
+        else if(_currentOrientation == SCREEN_ORIENTATION.INV_PORTRAIT)
+        {
+            if (_rotation < 180f - _safeArea || _rotation > 180f + _safeArea)
+                return true;
+        }
+        else if(_currentOrientation == SCREEN_ORIENTATION.INV_LANDSCAPE)
+        {
+            if (_rotation < 90f - _safeArea || _rotation > 90f + _safeArea)
+                return true;
+        }
+        else if (_currentOrientation == SCREEN_ORIENTATION.PORTRAIT)
+        {
+            if (_rotation > 0f + _safeArea || _rotation < 360f - _safeArea)
+                return true;
+        }
+
+        return false; //It does not have to rotate
     }
 }
 

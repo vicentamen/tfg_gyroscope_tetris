@@ -23,8 +23,10 @@ public class PieceBase : MonoBehaviour
     [SerializeField] private Transform[] _pieceBlocks;
     private Transform[,] _pieceGrid; //Grid of the pieces blocks as they would appear in the playfield board the grid gets rotated
     private Transform[,] _rotatedGrid;
+    private float _startRotation;
     public Transform[,] pieceGrid { get => _rotatedGrid; }
     public Transform[] pieceBlocks { get => _pieceBlocks; }
+    public float startRotation { get => _startRotation; }
 
     public void InitPiece(PlayfieldGrid playfield)
     {
@@ -78,8 +80,10 @@ public class PieceBase : MonoBehaviour
         _rotatedGrid = _pieceGrid;
     }
 
-    public void Enable()
+    public void Enable(float rotation)
     {
+        _startRotation = rotation;
+
         _rotatedGrid = _pieceGrid;
         transform.rotation = Quaternion.identity;
 
@@ -116,17 +120,17 @@ public class PieceBase : MonoBehaviour
 
     public void Rotate(float rotation)
     {
+        //Transform rotation
+        rotation -= _startRotation;
+        //Make sure the rotation is within 0 and 360
+        if (rotation < 0)
+            rotation = 360 + rotation;//rotation is negative
+        else if (rotation > 360)
+            rotation -= 360;
+
         transform.rotation = Quaternion.Euler(0, 0, rotation);
 
-        //Rotate grid
-        if (rotation >= 90f && rotation < 180f)
-            _rotatedGrid = GetRotatedGrid90();
-        else if (rotation >= 180f && rotation < 270)
-            _rotatedGrid = GetRotatedGrid180();
-        else if (rotation >= 270 && rotation < 360)
-            _rotatedGrid = GetRotatedGridMinus90();
-        else
-            _rotatedGrid = _pieceGrid;
+        _rotatedGrid = GetRotatedGrid(rotation);
     }
 
     /// <summary>
@@ -151,6 +155,19 @@ public class PieceBase : MonoBehaviour
     #endregion
 
     #region GET_PIECE_DATA
+    public Transform[,] GetRotatedGrid(float rotation)
+    {
+        //Rotate grid
+        if (rotation >= 90f && rotation < 180f)
+            return GetRotatedGrid90();
+        else if (rotation >= 180f && rotation < 270)
+            return GetRotatedGrid180();
+        else if (rotation >= 270 && rotation < 360)
+            return GetRotatedGridMinus90();
+        else
+            return _pieceGrid;
+    }
+
     /// <summary>
     /// Returns the current grid of the piece rotated -90 degrees
     /// </summary>

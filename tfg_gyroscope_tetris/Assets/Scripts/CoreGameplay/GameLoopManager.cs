@@ -12,6 +12,7 @@ public class GameLoopManager : MonoBehaviour
     [SerializeField] private PlayerController _playerController;
     [SerializeField] private PlayfieldManager _playfield;
     [SerializeField] private PieceManager _pieceManager;
+    [SerializeField] private ScoreManager _scoreManager;
 
     //Game state variables
     private bool _isGameOver = false;
@@ -41,6 +42,7 @@ public class GameLoopManager : MonoBehaviour
         _playerController.onPiecePlaced.AddListener(OnPiecePlaced);
 
         //Initialize Score manager
+        _scoreManager.Initialize();
 
         _isPaused = false;
         _isGameOver = false;
@@ -63,6 +65,7 @@ public class GameLoopManager : MonoBehaviour
         if (!_isGameOver && !_isPaused) //Will have to check the game state after each one on the loops have been tested
         {
             _playerController.UpdatePlayer();
+
         }
     }
 
@@ -70,16 +73,23 @@ public class GameLoopManager : MonoBehaviour
     {
         //Place piece
         PiecePlaceResult placeResult = _playfield.PlacePiece(placedPiece);
-        //Check game condition
-        //Is game over, is there any line filled?
-        //Give new active piece and enable player controller
+        _scoreManager.PiecePlaced();
+
         if(placeResult.completedCount > 0)
         {
             _playfield.ClearLines(placeResult.completedLines);
+            _scoreManager.LinesCleared(placeResult.completedCount);
         }
 
-        _playerController.SetNewActivePiece(_pieceManager.GetNextPiece());
-        _playerController.Enable();
+        if (Playfield.IsBoardLinesFull())
+        {
+            GameOver();
+        }
+        else
+        {
+            _playerController.SetNewActivePiece(_pieceManager.GetNextPiece());
+            _playerController.Enable();
+        }
     }
 
     /// <summary>
@@ -96,6 +106,14 @@ public class GameLoopManager : MonoBehaviour
     private void ResumeGame()
     {
 
+    }
+
+    private void GameOver()
+    {
+        _isGameOver = true;
+        _playerController.Disable();
+
+        Playfield.ClearBoard(() => Debug.Log("Game Over"));
     }
     #endregion
 
