@@ -17,7 +17,7 @@ public class RotationManager : MonoBehaviour
     //Rotation events
     [HideInInspector] public UnityEvent<SCREEN_ORIENTATION> onRotation;
 
-    private void Start()
+    private void Awake()
     {
         Rotator.SetUpManager(this);
 
@@ -30,6 +30,7 @@ public class RotationManager : MonoBehaviour
         _rotation = 0;
     }
 
+
     private void Update()
     {
         _rotation += _inputSystem.GetRotation() * _rotationSpeed * Time.deltaTime;
@@ -40,7 +41,6 @@ public class RotationManager : MonoBehaviour
         else if (_rotation < 0f)
             _rotation += 360f; //The rotation will be negative here, that is why we are adding instead of substracting
 
-        Debug.Log("rotation: " + _rotation + " orientation: " + GetOrientationFromRotation(_rotation));
         if (CheckRotation(_rotation))
         {
             SCREEN_ORIENTATION orientation = GetOrientationFromRotation(_rotation);
@@ -119,6 +119,7 @@ public enum SCREEN_ORIENTATION
 public static class Rotator
 {
     private static RotationManager _manager;
+    public static UnityEvent<SCREEN_ORIENTATION> onRotateEvent { get => _manager.onRotation; set => _manager.onRotation = value; }
 
     public static SCREEN_ORIENTATION orientation { get => _manager.orientation; }
 

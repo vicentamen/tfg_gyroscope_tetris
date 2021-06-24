@@ -10,8 +10,6 @@ public class PlayerController : MonoBehaviour
     private InputSystem _inputSystem;
     [SerializeField] private RotationManager _rotManager;
 
-    public Transform screen;
-
     private Timer _inputReadTimer;
     private Timer _pieceFallTimer;
 
@@ -135,9 +133,6 @@ public class PlayerController : MonoBehaviour
             {
                 //Give the piece the new starting rotation
             }
-            
-            screen.transform.DORotate(new Vector3(0, 0, Rotator.GetRotationFromOrientation(orientation)), 0.5f); //only for testing
-
 
             _orientation = orientation;
 

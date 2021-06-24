@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0da0b6a439ba074468b853e794642970, type: 3}
   m_Name: default_playfield_grid
   m_EditorClassIdentifier: 
-  _worldSizeX: 14
-  _worldSizeY: 18
-  _columns: 14
-  _rows: 18
+  _worldSizeX: 12
+  _worldSizeY: 15
+  _columns: 12
+  _rows: 15
   _cellSize: 1
