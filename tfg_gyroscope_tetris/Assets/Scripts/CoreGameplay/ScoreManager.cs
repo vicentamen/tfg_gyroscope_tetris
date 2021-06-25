@@ -8,12 +8,13 @@ public class ScoreManager : MonoBehaviour
 {
     [SerializeField] private ScoreAndPlayerProgress _scoreData;
     [SerializeField] private TMP_Text _scoreText;
-    private float _score;
+    public int score { get => _score; }
+    private int _score;
 
     public void Initialize()
     {
-        _score = 0f;
-        UpdateScore(0f);
+        _score = 0;
+        UpdateScore(0);
     }
     
     public void LinesCleared(int linesCount)
@@ -26,7 +27,7 @@ public class ScoreManager : MonoBehaviour
         UpdateScore(_scoreData.PiecePlaced());
     }
 
-    private void UpdateScore(float score)
+    private void UpdateScore(int score)
     {
         _score += score;
         _scoreText.SetText(_score.ToString());

@@ -5,20 +5,20 @@ using UnityEngine;
 [CreateAssetMenu(menuName = " GyroTetris/new Player progress")]
 public class ScoreAndPlayerProgress : ScriptableObject
 {
-    [SerializeField] private float _scorePerPiece;
-    [SerializeField] private float _scorePerLine;
+    [SerializeField] private int _scorePerPiece;
+    [SerializeField] private int _scorePerLine;
     [SerializeField] List<float> _comboMultipliers;
 
 
-    public float LinesCleared(int linesCount)
+    public int LinesCleared(int linesCount)
     {
         if (linesCount > _comboMultipliers.Count)
             linesCount = _comboMultipliers.Count;
 
-        return _scorePerLine * _comboMultipliers[linesCount];
+        return Mathf.RoundToInt(_scorePerLine * _comboMultipliers[linesCount]);
     }
 
-    public float PiecePlaced()
+    public int PiecePlaced()
     {
         return _scorePerPiece;
     }

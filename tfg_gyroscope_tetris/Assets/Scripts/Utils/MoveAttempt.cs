@@ -72,6 +72,8 @@ public struct MoveAttempt
                     //Chekc if block will be out of bounds
                     if (Playfield.IsBlockOutOfBounds(newPos))
                     {
+                         ScreenShake.DoShake(Vector3.left);
+
                         _state = MOVE_STATE.SUCCESS;
                         return;
                     }
@@ -102,6 +104,8 @@ public struct MoveAttempt
                     //Chekc if block will be out of bounds
                     if (Playfield.IsBlockOutOfBounds(newPos))
                     {
+                        ScreenShake.DoShake(Vector3.right);
+
                         _state = MOVE_STATE.SUCCESS;
                         return;
                     }

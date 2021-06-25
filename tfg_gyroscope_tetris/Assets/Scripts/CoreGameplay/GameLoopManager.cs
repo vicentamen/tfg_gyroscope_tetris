@@ -13,6 +13,7 @@ public class GameLoopManager : MonoBehaviour
     [SerializeField] private PlayfieldManager _playfield;
     [SerializeField] private PieceManager _pieceManager;
     [SerializeField] private ScoreManager _scoreManager;
+    [SerializeField] private GameOverMenu _gameOverMenu;
 
     //Game state variables
     private bool _isGameOver = false;
@@ -71,6 +72,8 @@ public class GameLoopManager : MonoBehaviour
 
     private void OnPiecePlaced(PieceBase placedPiece)
     {
+        ScreenShake.DoBounce(Vector3.down);
+
         //Place piece
         PiecePlaceResult placeResult = _playfield.PlacePiece(placedPiece);
         _scoreManager.PiecePlaced();
@@ -99,7 +102,8 @@ public class GameLoopManager : MonoBehaviour
     /// </summary>
     private void PauseGame()
     {
-        
+        _isPaused = true;
+        _playerController.Disable(); //Disable the player so the piece does not rotate or fall
     }
 
     /// <summary>
@@ -107,7 +111,8 @@ public class GameLoopManager : MonoBehaviour
     /// </summary>
     private void ResumeGame()
     {
-
+        _playerController.Enable(); //Re enable the player to keep playing
+        _isPaused = false;
     }
 
     private void GameOver()
@@ -115,16 +120,9 @@ public class GameLoopManager : MonoBehaviour
         _isGameOver = true;
         _playerController.Disable();
 
-        Playfield.ClearBoard(() => Debug.Log("Game Over"));
+        Playfield.ClearBoard(() => _gameOverMenu.ShowMenu(_scoreManager.score));
+
+        Vibrator.CreateOneShot(1500);
     }
     #endregion
-
-    /// <summary>
-    /// Check if the game has been finished
-    /// </summary>
-    /// <returns></returns>
-    private bool CheckGameOver()
-    {
-        return _isGameOver;
-    }
 }

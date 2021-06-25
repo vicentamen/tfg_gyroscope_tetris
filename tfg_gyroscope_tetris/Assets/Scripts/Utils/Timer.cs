@@ -36,7 +36,6 @@ public class Timer
     public void StartTimer()
     {
         _isTimerRunning = true;
-        _timer = 0f; 
     }
 
     public void StopTimer()
@@ -49,8 +48,9 @@ public class Timer
         _isTimerRunning = false; //change the state of the timer started to the opposite
     }
 
-    public void ResumeTimer()
+    public void ResetTimer()
     {
-        _isTimerRunning = true;
+        _timer = 0f;
+        StartTimer();
     }
 }

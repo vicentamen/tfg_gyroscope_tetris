@@ -37,10 +37,15 @@ public class PlayerController : MonoBehaviour
     {
         _inputReadTimer.StartTimer();
         _pieceFallTimer.StartTimer();
+
+        _rotManager.onRotation.AddListener(RotateActivePiece);
     }
 
     public void Disable()
     {
+        _inputReadTimer.StopTimer();
+        _pieceFallTimer.StopTimer();
+
         _rotManager.onRotation.RemoveListener(RotateActivePiece);
     }
 
@@ -68,7 +73,7 @@ public class PlayerController : MonoBehaviour
         else if (_orientation == SCREEN_ORIENTATION.INV_LANDSCAPE) x = _inputSystem.GetVertical();
 
         if (MoveActivePiece(new Vector2(x, 0f)))
-            _inputReadTimer.StartTimer(); //Restart timer if it can keep moving
+            _inputReadTimer.ResetTimer(); //Restart timer if it can keep moving
         else
             OnPiecePlaced();
           
@@ -77,7 +82,7 @@ public class PlayerController : MonoBehaviour
     private void OnPieceFallTimer()
     {
         if (MoveActivePiece(Vector2.down))
-            _pieceFallTimer.StartTimer();
+            _pieceFallTimer.ResetTimer();
         else
             OnPiecePlaced();
     }
@@ -112,6 +117,9 @@ public class PlayerController : MonoBehaviour
         newPiece.Enable(Rotator.GetRotationFromOrientation(_orientation));
 
         _activePiece = newPiece;
+
+        _pieceFallTimer.ResetTimer();
+        _inputReadTimer.ResetTimer(); 
     }
 
     public void RotateActivePiece(SCREEN_ORIENTATION orientation)
@@ -141,8 +149,8 @@ public class PlayerController : MonoBehaviour
             //delay turning on the timers a little bit
             DOVirtual.DelayedCall(1f, () =>
             {
-                _inputReadTimer.ResumeTimer();
-                _pieceFallTimer.ResumeTimer();
+                _inputReadTimer.StartTimer();
+                _pieceFallTimer.StartTimer();
             });
         }
     }
