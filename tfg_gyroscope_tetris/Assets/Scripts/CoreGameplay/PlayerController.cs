@@ -98,8 +98,10 @@ public class PlayerController : MonoBehaviour
     private bool MoveActivePiece(Vector2 moveDir)
     {
         MoveAttempt moveAttempt = new MoveAttempt(moveDir, _activePiece);
-
         _activePiece.Move(moveAttempt.position);
+
+        if (Mathf.Abs(moveDir.x) > 0)
+            Vibrator.CreateOneShot(50, 50);
 
         return moveAttempt.moveState == MOVE_STATE.SUCCESS;
     }

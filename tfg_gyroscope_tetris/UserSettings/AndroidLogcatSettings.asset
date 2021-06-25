@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "1d96590a0704",
         "name": "com.DefaultCompany.com.unity.template.mobile2D",
-        "processId": 12782,
+        "processId": 32684,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -11,55 +11,103 @@
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 32278,
+            "processId": 12917,
             "exited": true
         },
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 1271,
-            "exited": true
-        },
-        {
-            "deviceId": "1d96590a0704",
-            "name": "com.unity3d.genericremote",
-            "processId": 1470,
+            "processId": 13524,
             "exited": true
         },
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 1929,
+            "processId": 13782,
             "exited": true
         },
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 15074,
+            "processId": 16609,
             "exited": true
         },
         {
             "deviceId": "1d96590a0704",
-            "name": "com.unity3d.genericremote",
-            "processId": 8598,
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 18096,
+            "exited": true
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 24893,
             "exited": false
         },
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 25544,
+            "processId": 27466,
             "exited": false
         },
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 25105,
+            "processId": 27850,
             "exited": false
         },
         {
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
-            "processId": 12782,
+            "processId": 28115,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 28573,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 28880,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 31272,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 32000,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 32437,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 32684,
+            "exited": false
+        },
+        {
+            "deviceId": "c756eea30605",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 28488,
+            "exited": false
+        },
+        {
+            "deviceId": "c756eea30605",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 29556,
             "exited": false
         }
     ],

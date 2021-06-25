@@ -75,10 +75,12 @@ public class GameLoopManager : MonoBehaviour
         PiecePlaceResult placeResult = _playfield.PlacePiece(placedPiece);
         _scoreManager.PiecePlaced();
 
-        if(placeResult.completedCount > 0)
+        if(placeResult.completedCount > 0) //Lines have been cleared
         {
             _playfield.ClearLines(placeResult.completedLines);
             _scoreManager.LinesCleared(placeResult.completedCount);
+
+            Vibrator.CreateWaveform(new long[] { 1000, 100, 200, 100 }, -1);
         }
 
         if (Playfield.IsBoardLinesFull())

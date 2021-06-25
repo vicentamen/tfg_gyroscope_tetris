@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 730d6fe1f4c8e4349b526348329de4d7, type: 3}
   m_Name: gyro_output
   m_EditorClassIdentifier: 
-  _horizontalSens: 0.2
-  _verticalSens: 0.2
+  _horizontalSens: 0.15
+  _verticalSens: 0.15
