@@ -1572,7 +1572,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _inputSystem: {fileID: 11400000, guid: 7447e325cd9625e409c5aadc7e288765, type: 2}
-  _rotationSpeed: 60
   _safeArea: 60
   onRotation:
     m_PersistentCalls:
@@ -3159,7 +3158,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1815883492
 RectTransform:
   m_ObjectHideFlags: 0

@@ -10,31 +10,29 @@ public class RotationManager : MonoBehaviour
     private SCREEN_ORIENTATION _currentOrientation;
 
     [SerializeField] private InputSystem _inputSystem;
-    [SerializeField] private float _rotationSpeed = 10f;
+    //[SerializeField] private float _rotationSpeed = 60f;
     [SerializeField] private float _safeArea = 20;
     private float _rotation = 0;
 
     //Rotation events
-    [HideInInspector] public UnityEvent<SCREEN_ORIENTATION> onRotation;
+    [HideInInspector] public UnityEvent<SCREEN_ORIENTATION> onRotation = new UnityEvent<SCREEN_ORIENTATION>();
 
     private void Awake()
     {
         Rotator.SetUpManager(this);
 
-        //Init unity events
-        onRotation = new UnityEvent<SCREEN_ORIENTATION>();
-
         //Setup orientations
         _currentOrientation = SCREEN_ORIENTATION.PORTRAIT;
 
-        _rotation = 0;
+        _rotation = 0f;
     }
 
 
     private void Update()
     {
-        _rotation += _inputSystem.GetRotation() * _rotationSpeed * Time.deltaTime;
+        //_rotation += _inputSystem.GetRotation() * _rotationSpeed * Time.deltaTime;
         //_rotation = Input.gyro.attitude.eulerAngles.z - 90f;
+        _rotation += _inputSystem.GetRotation() * Mathf.Rad2Deg * Time.deltaTime;
         //Keep rotation within 0 and 359
         if (_rotation >= 360f)
             _rotation -= 360f;
@@ -46,6 +44,11 @@ public class RotationManager : MonoBehaviour
             SCREEN_ORIENTATION orientation = GetOrientationFromRotation(_rotation);
             Rotate(orientation);
         }
+    }
+
+    public void ResetRotation()
+    {
+
     }
 
     private void Rotate(SCREEN_ORIENTATION newOrientation)
@@ -131,5 +134,10 @@ public static class Rotator
     public static float GetRotationFromOrientation(SCREEN_ORIENTATION orientation)
     {
         return _manager.GetRotationFromOrientation(orientation);
+    }
+
+    public static void ResetRotation()
+    {
+        _manager.ResetRotation();
     }
 }

@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField, Tooltip("Platform input system for the player")] 
     private InputSystem _inputSystem;
-    [SerializeField] private RotationManager _rotManager;
 
     private Timer _inputReadTimer;
     private Timer _pieceFallTimer;
@@ -30,7 +29,7 @@ public class PlayerController : MonoBehaviour
         _pieceFallTimer = new Timer(gameData.timeBetweenFall, OnPieceFallTimer);
 
         //Add listeners
-        _rotManager.onRotation.AddListener(RotateActivePiece);
+        Rotator.onRotateEvent.AddListener(RotateActivePiece);
     }
 
     public void Enable()
@@ -38,7 +37,7 @@ public class PlayerController : MonoBehaviour
         _inputReadTimer.StartTimer();
         _pieceFallTimer.StartTimer();
 
-        _rotManager.onRotation.AddListener(RotateActivePiece);
+        Rotator.onRotateEvent.AddListener(RotateActivePiece);
     }
 
     public void Disable()
@@ -46,7 +45,7 @@ public class PlayerController : MonoBehaviour
         _inputReadTimer.StopTimer();
         _pieceFallTimer.StopTimer();
 
-        _rotManager.onRotation.RemoveListener(RotateActivePiece);
+        Rotator.onRotateEvent.RemoveListener(RotateActivePiece);
     }
 
     private void OnDisable()
@@ -105,7 +104,7 @@ public class PlayerController : MonoBehaviour
         MoveAttempt moveAttempt = new MoveAttempt(moveDir, _activePiece);
         _activePiece.Move(moveAttempt.position);
 
-        if (Mathf.Abs(moveDir.x) > 0)
+        if (Mathf.Abs(moveDir.x) > 0) //If the piece is moving horizontally make the device vibrate
             Vibrator.CreateOneShot(50, 50);
 
         return moveAttempt.moveState == MOVE_STATE.SUCCESS;
@@ -134,14 +133,10 @@ public class PlayerController : MonoBehaviour
             RotationAttempt rotAttempt = new RotationAttempt(orientation, _activePiece);
             if(rotAttempt.state == PIECE_ROTATION_STATE.SUCCESS) //if the piece can freely rotate, then rotate
             {
-                float rotation = Rotator.GetRotationFromOrientation(orientation);
+                float rotation = -Rotator.GetRotationFromOrientation(orientation); //The rotation goes opposite to the screen rotation
 
                 _activePiece.Move(rotAttempt.position);
                 _activePiece.Rotate(rotation);
-            }
-            else //if the piece cannot rotate
-            {
-                //Give the piece the new starting rotation
             }
 
             _orientation = orientation;

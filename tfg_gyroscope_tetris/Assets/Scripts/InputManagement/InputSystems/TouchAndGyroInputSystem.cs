@@ -27,7 +27,7 @@ public class TouchAndGyroInputSystem : InputSystem
 
     public override float GetRotation()
     {
-        float rotation = -Input.gyro.rotationRateUnbiased.z;
+        float rotation = -Input.gyro.rotationRate.z;
         return rotation;
     }
 
