@@ -5,6 +5,7 @@ using UnityEngine;
 public class TranslateWithScreen : MonoBehaviour
 {
     [SerializeField] private ConstrainedPositions[] positions;
+
     // Start is called before the first frame update
     void Start()
     {

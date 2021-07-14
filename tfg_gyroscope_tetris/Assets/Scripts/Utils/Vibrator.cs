@@ -2,6 +2,8 @@ using UnityEngine;
 
 public static class Vibrator
 {
+    public static bool enabled = true;
+
 #if UNITY_ANDROID && !UNITY_EDITOR
     public static AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
     public static AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
@@ -30,6 +32,7 @@ public static class Vibrator
     //Works on API > 25
     public static void CreateOneShot(long milliseconds)
     {
+        if (!enabled) return;
 
         if (isAndroid())
         {
@@ -52,6 +55,8 @@ public static class Vibrator
 
     public static void CreateOneShot(long milliseconds, int amplitude)
     {
+        if (!enabled) return;
+
         if (isAndroid())
         {
             //If Android 8.0 (API 26+) or never use the new vibrationeffects
@@ -74,6 +79,8 @@ public static class Vibrator
     //Works on API > 25
     public static void CreateWaveform(long[] timings, int repeat)
     {
+        if (!enabled) return;
+
         //Amplitude array varies between no vibration and default_vibration up to the number of timings
 
         if (isAndroid())
@@ -97,6 +104,8 @@ public static class Vibrator
 
     public static void CreateWaveform(long[] timings, int[] amplitudes, int repeat)
     {
+        if (!enabled) return; 
+
         if (isAndroid())
         {
             //If Android 8.0 (API 26+) or never use the new vibrationeffects

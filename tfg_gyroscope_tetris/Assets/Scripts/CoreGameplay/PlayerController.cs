@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour
 
     private SCREEN_ORIENTATION _orientation;
 
+    public bool makePieceMove = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -58,9 +60,13 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R)) //Only for testing purposes
             _activePiece.RotateLeft();
+        
+        if(makePieceMove)
+        {
+            _pieceFallTimer.Update();
+        }
 
         _inputReadTimer.Update();
-        _pieceFallTimer.Update();
     }
 
     private void OnPlayerInputTimer()

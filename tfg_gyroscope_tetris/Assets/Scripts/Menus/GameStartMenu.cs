@@ -25,7 +25,7 @@ public class GameStartMenu : MonoBehaviour
     
     public void OnStart()
     {
-        HideAnimation(() => GameManager.ChangeScene(GAME_SCENES.CoreLoopScene));
+        HideAnimation(() => GameManager.LoadScene(GAME_SCENES.CoreLoopScene));
     }
 
     private void OnSettings()

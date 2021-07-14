@@ -50,11 +50,11 @@ public class GameOverMenu : MonoBehaviour
 
     public void OnPlayAgain()
     {
-        //reset scene and start the game again
+        GameManager.ResetScene(); //Reload the current scene
     }
 
     public void OnExit()
     {
-       //Go to the main menu
+        GameManager.LoadScene(GAME_SCENES.StartScene); //Go to the main menu
     }
 }

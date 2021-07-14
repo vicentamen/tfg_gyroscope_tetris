@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager _instance;
+    [SerializeField] RotationManager _rotManager;
 
     private void Awake()
     {
@@ -20,9 +21,12 @@ public class GameManager : MonoBehaviour
     private void Init()
     {
         Screen.sleepTimeout = 0; //Avoid the device screens from ever turning off alone
+
+        Input.gyro.enabled = true;
+        _rotManager.Init();
     }
 
-    public static void ChangeScene(GAME_SCENES scene)
+    public static void LoadScene(GAME_SCENES scene)
     {
         SceneManager.LoadScene((int)scene);
     }

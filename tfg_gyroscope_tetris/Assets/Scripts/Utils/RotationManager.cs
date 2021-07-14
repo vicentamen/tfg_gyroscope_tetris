@@ -17,12 +17,13 @@ public class RotationManager : MonoBehaviour
     //Rotation events
     [HideInInspector] public UnityEvent<SCREEN_ORIENTATION> onRotation = new UnityEvent<SCREEN_ORIENTATION>();
 
-    private void Awake()
+    public void Init()
     {
         Rotator.SetUpManager(this);
 
         //Setup orientations
         _currentOrientation = SCREEN_ORIENTATION.PORTRAIT;
+
 
         _rotation = 0f;
     }

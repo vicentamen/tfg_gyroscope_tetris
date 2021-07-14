@@ -14,6 +14,7 @@ public class GameLoopManager : MonoBehaviour
     [SerializeField] private PieceManager _pieceManager;
     [SerializeField] private ScoreManager _scoreManager;
     [SerializeField] private GameOverMenu _gameOverMenu;
+    [SerializeField] private PauseMenu _pauseMenu;
 
     //Game state variables
     private bool _isGameOver = false;
@@ -66,7 +67,6 @@ public class GameLoopManager : MonoBehaviour
         if (!_isGameOver && !_isPaused) //Will have to check the game state after each one on the loops have been tested
         {
             _playerController.UpdatePlayer();
-
         }
     }
 
@@ -100,18 +100,21 @@ public class GameLoopManager : MonoBehaviour
     /// <summary>
     /// Pause the game and pause the input and fall loops
     /// </summary>
-    private void PauseGame()
+    public void PauseGame()
     {
         _isPaused = true;
         _playerController.Disable(); //Disable the player so the piece does not rotate or fall
+
+        _pauseMenu.ShowMenu(Rotator.orientation, ResumeGame);
     }
 
     /// <summary>
     /// Resume the game and play the Input and fall loops
     /// </summary>
-    private void ResumeGame()
+    public void ResumeGame()
     {
         _playerController.Enable(); //Re enable the player to keep playing
+
         _isPaused = false;
     }
 
