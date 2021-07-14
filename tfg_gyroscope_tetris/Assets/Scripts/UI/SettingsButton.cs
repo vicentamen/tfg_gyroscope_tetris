@@ -19,21 +19,34 @@ public class SettingsButton : MonoBehaviour
 
     private void Start()
     {
-        _state = true;
-        ActiveState(); 
+        switch (_optionRef)
+        {
+            case SETTINGS_OPTIONS.Vibration:
+                SetState(Vibrator.enabled);
+                break;
+            case SETTINGS_OPTIONS.Audio:
+                SetState(true);
+                break;
+            default:
+                break;
+        }
     }
 
     public void ToggleState()
     {
         ChangeSettingOption(_optionRef, !_state);
+        SetState(!_state); 
+    }
 
-        if (_state)
-            InactiveState();
-        else
+    private void SetState(bool state)
+    {
+        if (state)
             ActiveState();
+        else
+            InactiveState();
 
 
-        _state = !_state;
+        _state = state;
     }
 
     private void ActiveState()

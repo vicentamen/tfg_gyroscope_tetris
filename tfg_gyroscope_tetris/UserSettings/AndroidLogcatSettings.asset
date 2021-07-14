@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "1d96590a0704",
         "name": "com.DefaultCompany.com.unity.template.mobile2D",
-        "processId": 28610,
+        "processId": 25059,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -54,6 +54,54 @@
             "deviceId": "1d96590a0704",
             "name": "com.DefaultCompany.com.unity.template.mobile2D",
             "processId": 28610,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 19200,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 20018,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 20643,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 22228,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 22719,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 22957,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 23926,
+            "exited": false
+        },
+        {
+            "deviceId": "1d96590a0704",
+            "name": "com.DefaultCompany.com.unity.template.mobile2D",
+            "processId": 25059,
             "exited": false
         },
         {
